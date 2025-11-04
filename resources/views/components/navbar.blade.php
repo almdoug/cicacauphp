@@ -23,9 +23,52 @@
                     Início
                 </a>
 
-                <a  ref="#" class="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium transition-colors">
-                    O Centro
+                <a href="#" class="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium transition-colors">
+                    Sobre
                 </a>
+
+                <!-- Dropdown Ciência e Tecnologia -->
+                <div class="relative" @mouseenter="cienciaOpen = true" @mouseleave="cienciaOpen = false">
+                    <button class="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium transition-colors flex items-center gap-1">
+                        Ciência e Tecnologia
+                        <svg class="w-4 h-4 transition-transform" :class="cienciaOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div x-show="cienciaOpen" 
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 scale-95"
+                         x-transition:enter-end="opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-75"
+                         x-transition:leave-start="opacity-100 scale-100"
+                         x-transition:leave-end="opacity-0 scale-95"
+                         class="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-lg py-2 z-50">
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Pesquisa</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Patentes</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Editais</a>
+                    </div>
+                </div>
+
+                <!-- Dropdown Mercado -->
+                <div class="relative" @mouseenter="mercadoOpen = true" @mouseleave="mercadoOpen = false">
+                    <button class="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium transition-colors flex items-center gap-1">
+                        Mercado
+                        <svg class="w-4 h-4 transition-transform" :class="mercadoOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div x-show="mercadoOpen" 
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 scale-95"
+                         x-transition:enter-end="opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-75"
+                         x-transition:leave-start="opacity-100 scale-100"
+                         x-transition:leave-end="opacity-0 scale-95"
+                         class="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-lg py-2 z-50">
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Custos de Produção</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Mercado Nacional e Internacional</a>
+                    </div>
+                </div>
 
                 <!-- Dropdown Destaques -->
                 <div class="relative" @mouseenter="destacandoOpen = true" @mouseleave="destacandoOpen = false">
@@ -46,55 +89,6 @@
                         <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Notícias</a>
                         <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Cursos e Eventos</a>
                         <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Entrevistas</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Custo de Produção</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Links</a>
-                    </div>
-                </div>
-
-                <!-- Dropdown Mercado -->
-                <div class="relative" @mouseenter="mercadoOpen = true" @mouseleave="mercadoOpen = false">
-                    <button class="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium transition-colors flex items-center gap-1">
-                        Mercado
-                        <svg class="w-4 h-4 transition-transform" :class="mercadoOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                    </button>
-                    <div x-show="mercadoOpen" 
-                         x-transition:enter="transition ease-out duration-200"
-                         x-transition:enter-start="opacity-0 scale-95"
-                         x-transition:enter-end="opacity-100 scale-100"
-                         x-transition:leave="transition ease-in duration-75"
-                         x-transition:leave-start="opacity-100 scale-100"
-                         x-transition:leave-end="opacity-0 scale-95"
-                         class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-2 z-50">
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Preço</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Produção</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Exportação</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Importação</a>
-                    </div>
-                </div>
-
-                <!-- Dropdown Ciência e Tecnologia -->
-                <div class="relative" @mouseenter="cienciaOpen = true" @mouseleave="cienciaOpen = false">
-                    <button class="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium transition-colors flex items-center gap-1">
-                        Ciência e Tecnologia
-                        <svg class="w-4 h-4 transition-transform" :class="cienciaOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                    </button>
-                    <div x-show="cienciaOpen" 
-                         x-transition:enter="transition ease-out duration-200"
-                         x-transition:enter-start="opacity-0 scale-95"
-                         x-transition:enter-end="opacity-100 scale-100"
-                         x-transition:leave="transition ease-in duration-75"
-                         x-transition:leave-start="opacity-100 scale-100"
-                         x-transition:leave-end="opacity-0 scale-95"
-                         class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-2 z-50">
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Artigos e Documentos</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Editais</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Livros</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Patentes</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Teses e Dissertações</a>
                     </div>
                 </div>
 
@@ -144,8 +138,37 @@
                 Início
             </a>
             <a href="#" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
-                O Centro
+                Sobre
             </a>
+
+            <!-- Mobile Dropdown Ciência e Tecnologia -->
+            <div x-data="{ open: false }">
+                <button @click="open = !open" class="w-full flex items-center justify-between px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                    <span>Ciência e Tecnologia</span>
+                    <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                <div x-show="open" class="pl-6 space-y-1">
+                    <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Pesquisa</a>
+                    <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Patentes</a>
+                    <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Editais</a>
+                </div>
+            </div>
+
+            <!-- Mobile Dropdown Mercado -->
+            <div x-data="{ open: false }">
+                <button @click="open = !open" class="w-full flex items-center justify-between px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                    <span>Mercado</span>
+                    <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                <div x-show="open" class="pl-6 space-y-1">
+                    <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Custos de Produção</a>
+                    <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Mercado Nacional e Internacional</a>
+                </div>
+            </div>
 
             <!-- Mobile Dropdown Destaques -->
             <div x-data="{ open: false }">
@@ -159,41 +182,6 @@
                     <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Notícias</a>
                     <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Cursos e Eventos</a>
                     <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Entrevistas</a>
-                    <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Custo de Produção</a>
-                    <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Links</a>
-                </div>
-            </div>
-
-            <!-- Mobile Dropdown Mercado -->
-            <div x-data="{ open: false }">
-                <button @click="open = !open" class="w-full flex items-center justify-between px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
-                    <span>Mercado</span>
-                    <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                </button>
-                <div x-show="open" class="pl-6 space-y-1">
-                    <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Preço</a>
-                    <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Produção</a>
-                    <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Exportação</a>
-                    <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Importação</a>
-                </div>
-            </div>
-
-            <!-- Mobile Dropdown Ciência e Tecnologia -->
-            <div x-data="{ open: false }">
-                <button @click="open = !open" class="w-full flex items-center justify-between px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
-                    <span>Ciência e Tecnologia</span>
-                    <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                </button>
-                <div x-show="open" class="pl-6 space-y-1">
-                    <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Artigos e Documentos</a>
-                    <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Editais</a>
-                    <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Livros</a>
-                    <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Patentes</a>
-                    <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Teses e Dissertações</a>
                 </div>
             </div>
 
