@@ -32,7 +32,7 @@
                         <img 
                             src="{{ asset('images/hero.png') }}" 
                             alt="CI Cacau - Centro de Inteligência do Cacau" 
-                            class="relative rounded-2xl shadow-xl"
+                            class="relative"
                         >
                     </div>
                 </div>
