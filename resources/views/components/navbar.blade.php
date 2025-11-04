@@ -23,7 +23,7 @@
                     Início
                 </a>
 
-                <a href="#" class="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium transition-colors">
+                <a href="{{ route('sobre') }}" class="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium transition-colors">
                     Sobre
                 </a>
 
@@ -137,7 +137,7 @@
             <a href="{{ route('home') }}" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
                 Início
             </a>
-            <a href="#" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+            <a href="{{ route('sobre') }}" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
                 Sobre
             </a>
 

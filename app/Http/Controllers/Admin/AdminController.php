@@ -15,6 +15,7 @@ class AdminController extends Controller
     {
         $pages = [
             'home' => 'Página Inicial',
+            'sobre' => 'Sobre',
         ];
 
         return view('admin.dashboard', compact('pages'));

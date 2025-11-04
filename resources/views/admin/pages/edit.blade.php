@@ -35,7 +35,22 @@
                                 {{ str_replace('_', ' ', $item->key) }}
                             </label>
                             
-                            @if($item->type === 'textarea')
+                            @if($item->type === 'html')
+                                <div class="mb-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                    <p class="text-xs text-blue-800 flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        Editor HTML - Use para conteúdo formatado e estruturado
+                                    </p>
+                                </div>
+                                <textarea 
+                                    id="{{ $section }}_{{ $item->key }}"
+                                    name="contents[{{ $section }}][{{ $item->key }}]"
+                                    rows="10"
+                                    class="tinymce-editor w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg"
+                                >{{ $item->value }}</textarea>
+                            @elseif($item->type === 'textarea')
                                 <textarea 
                                     id="{{ $section }}_{{ $item->key }}"
                                     name="contents[{{ $section }}][{{ $item->key }}]"
@@ -89,3 +104,66 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<!-- TinyMCE -->
+<script src="https://cdn.tiny.cloud/1/6hy9a8w8irye827ucmizakpfyrwen5do5rdttukpsqtlsuyw/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM carregado - Procurando editores TinyMCE...');
+        
+        // Verifica se o TinyMCE foi carregado
+        if (typeof tinymce === 'undefined') {
+            console.error('❌ TinyMCE não foi carregado!');
+            return;
+        }
+        console.log('✓ TinyMCE biblioteca carregada');
+        
+        // Remove todas as instâncias anteriores do TinyMCE
+        tinymce.remove();
+        
+        // Aguarda um pouco para garantir que o DOM está completamente carregado
+        setTimeout(function() {
+            // Debug: mostra todos os textareas
+            const allTextareas = document.querySelectorAll('textarea');
+            console.log('Total de textareas na página:', allTextareas.length);
+            allTextareas.forEach((ta, index) => {
+                console.log(`Textarea ${index}:`, {
+                    id: ta.id,
+                    classes: ta.className,
+                    hasEditorClass: ta.classList.contains('tinymce-editor')
+                });
+            });
+            
+            const textareas = document.querySelectorAll('.tinymce-editor');
+            console.log('Textareas com classe .tinymce-editor:', textareas.length);
+            
+            if (textareas.length === 0) {
+                console.warn('⚠️ Nenhum textarea com classe .tinymce-editor encontrado');
+                console.log('Você está editando a página:', '{{ $page }}');
+                return;
+            }
+            
+            console.log('Inicializando TinyMCE...');
+            tinymce.init({
+                selector: '.tinymce-editor',
+                height: 400,
+                menubar: false,
+                plugins: [
+                    'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                    'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                    'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                ],
+                toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | removeformat | code',
+                content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 14px; line-height: 1.6; }',
+                language: 'pt_BR',
+                branding: false,
+                promotion: false,
+                init_instance_callback: function (editor) {
+                    console.log('✅ TinyMCE inicializado com sucesso:', editor.id);
+                }
+            });
+        }, 300);
+    });
+</script>
+@endpush

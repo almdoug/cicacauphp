@@ -12,6 +12,11 @@ Route::get('/', function () {
     return view('welcome', compact('contents'));
 })->name('home');
 
+Route::get('/sobre', function () {
+    $contents = PageContent::getPageContents('sobre');
+    return view('sobre', compact('contents'));
+})->name('sobre');
+
 // Auth Routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
