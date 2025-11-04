@@ -17,9 +17,18 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Douglas Almeida',
-            'email' => 'doug@cicacau.com',
+        // Criar usuário admin apenas se não existir
+        if (!User::where('email', 'admin@cicacau.uesc.br')->exists()) {
+            User::factory()->create([
+                'name' => 'Douglas Almeida',
+                'email' => 'admin@cicacau.uesc.br',
+            ]);
+        }
+
+        // Seeders de conteúdo das páginas
+        $this->call([
+            PageContentSeeder::class,
+            SobrePageContentSeeder::class,
         ]);
     }
 }

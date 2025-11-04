@@ -109,61 +109,41 @@
 <!-- TinyMCE -->
 <script src="https://cdn.tiny.cloud/1/6hy9a8w8irye827ucmizakpfyrwen5do5rdttukpsqtlsuyw/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM carregado - Procurando editores TinyMCE...');
-        
-        // Verifica se o TinyMCE foi carregado
+    function initTinyMCE() {
         if (typeof tinymce === 'undefined') {
-            console.error('❌ TinyMCE não foi carregado!');
             return;
         }
-        console.log('✓ TinyMCE biblioteca carregada');
         
-        // Remove todas as instâncias anteriores do TinyMCE
+        const textareas = document.querySelectorAll('.tinymce-editor');
+        if (textareas.length === 0) {
+            return;
+        }
+        
         tinymce.remove();
         
-        // Aguarda um pouco para garantir que o DOM está completamente carregado
-        setTimeout(function() {
-            // Debug: mostra todos os textareas
-            const allTextareas = document.querySelectorAll('textarea');
-            console.log('Total de textareas na página:', allTextareas.length);
-            allTextareas.forEach((ta, index) => {
-                console.log(`Textarea ${index}:`, {
-                    id: ta.id,
-                    classes: ta.className,
-                    hasEditorClass: ta.classList.contains('tinymce-editor')
-                });
-            });
-            
-            const textareas = document.querySelectorAll('.tinymce-editor');
-            console.log('Textareas com classe .tinymce-editor:', textareas.length);
-            
-            if (textareas.length === 0) {
-                console.warn('⚠️ Nenhum textarea com classe .tinymce-editor encontrado');
-                console.log('Você está editando a página:', '{{ $page }}');
-                return;
-            }
-            
-            console.log('Inicializando TinyMCE...');
-            tinymce.init({
-                selector: '.tinymce-editor',
-                height: 400,
-                menubar: false,
-                plugins: [
-                    'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                    'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                    'insertdatetime', 'media', 'table', 'help', 'wordcount'
-                ],
-                toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | removeformat | code',
-                content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 14px; line-height: 1.6; }',
-                language: 'pt_BR',
-                branding: false,
-                promotion: false,
-                init_instance_callback: function (editor) {
-                    console.log('✅ TinyMCE inicializado com sucesso:', editor.id);
-                }
-            });
-        }, 300);
-    });
+        tinymce.init({
+            selector: '.tinymce-editor',
+            height: 400,
+            menubar: false,
+            plugins: [
+                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                'insertdatetime', 'media', 'table', 'help', 'wordcount'
+            ],
+            toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | removeformat | code',
+            content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 14px; line-height: 1.6; }',
+            language: 'pt_BR',
+            branding: false,
+            promotion: false
+        });
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(initTinyMCE, 500);
+        });
+    } else {
+        setTimeout(initTinyMCE, 500);
+    }
 </script>
 @endpush
