@@ -26,7 +26,11 @@ class AdminController extends Controller
      */
     public function pages()
     {
-        $pages = PageContent::select('page')->distinct()->get();
-        return view('admin.pages', compact('pages'));
+        $pages = [
+            'home' => 'Página Inicial',
+            'sobre' => 'Sobre',
+        ];
+
+        return view('admin.pages.index', compact('pages'));
     }
 }

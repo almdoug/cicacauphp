@@ -9,7 +9,7 @@
     <div class="container mx-auto px-4">
         <div class="max-w-4xl mx-auto text-center">
             <h1 class="text-4xl md:text-5xl font-bold mb-6">
-                {{ content($contents ?? [], 'hero', 'title', 'Centro de Inteligência do Cacau (CI Cacau)') }}
+                {{ content($contents ?? [], 'hero', 'title', 'Centro de Inteligência do Cacau') }}
             </h1>
             <p class="text-xl md:text-2xl text-white/90">
                 {{ content($contents ?? [], 'hero', 'subtitle', 'Informação, pesquisa e inovação para o desenvolvimento sustentável do cacau brasileiro') }}

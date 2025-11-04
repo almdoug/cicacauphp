@@ -27,6 +27,7 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     
     // Page Content Management
+    Route::get('/pages', [AdminController::class, 'pages'])->name('admin.pages.index');
     Route::get('/pages/{page}/edit', [PageContentController::class, 'edit'])->name('admin.pages.edit');
     Route::put('/pages/{page}', [PageContentController::class, 'update'])->name('admin.pages.update');
 });

@@ -12,10 +12,10 @@
 
     <!-- Quick Actions -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        <div class="block bg-white rounded-lg shadow p-4 sm:p-6">
+        <a href="{{ route('admin.pages.index') }}" class="block bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-4 sm:p-6 group">
             <div class="flex items-center gap-3 sm:gap-4 mb-4">
-                <div class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-primary bg-opacity-10 rounded-lg flex-shrink-0">
-                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-primary bg-opacity-10 rounded-lg group-hover:bg-primary group-hover:bg-opacity-100 transition-colors flex-shrink-0">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                     </svg>
                 </div>
@@ -24,13 +24,18 @@
                     <p class="text-xs sm:text-sm text-gray-600">{{ count($pages) }} páginas disponíveis</p>
                 </div>
             </div>
-            <div class="text-xs sm:text-sm text-gray-600 mb-2">Veja abaixo a lista completa ↓</div>
-        </div>
+            <div class="text-xs sm:text-sm text-gray-600 group-hover:text-primary transition-colors flex items-center gap-1">
+                Ver todas as páginas
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </div>
+        </a>
 
         <a href="{{ route('home') }}" target="_blank" class="block bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-4 sm:p-6 group">
             <div class="flex items-center gap-3 sm:gap-4">
                 <div class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-secondary bg-opacity-20 rounded-lg group-hover:bg-opacity-30 transition-colors flex-shrink-0">
-                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                     </svg>
                 </div>

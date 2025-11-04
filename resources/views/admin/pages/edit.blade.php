@@ -11,7 +11,7 @@
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
         </svg>
-        <span class="hidden sm:inline">Salvar</span>
+        <span class="hidden sm:inline cursor-pointer">Salvar</span>
     </button>
 @endsection
 
@@ -83,7 +83,7 @@
             </a>
             <button 
                 type="submit" 
-                class="px-4 sm:px-6 py-2 sm:py-3 bg-primary text-white rounded-lg text-sm sm:text-base font-semibold hover:bg-opacity-90 transition-all shadow-lg hover:shadow-xl"
+                class="px-4 sm:px-6 py-2 sm:py-3 bg-primary text-white rounded-lg text-sm sm:text-base font-semibold hover:bg-opacity-90 transition-all shadow-lg hover:shadow-xl cursor-pointer"
             >
                 Salvar Alterações
             </button>
