@@ -113,7 +113,7 @@
                 </button>
 
                 <!-- Login Button -->
-                <a href="#" class="bg-primary text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-opacity-90 transition-all">
+                <a href="{{ route('login') }}" class="bg-primary text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-opacity-90 transition-all">
                     Login
                 </a>
             </div>
@@ -204,7 +204,7 @@
 
         <!-- Login Button Footer -->
         <div class="border-t border-gray-200 p-4">
-            <a href="#" class="block w-full bg-primary text-white px-6 py-3 rounded-lg text-center font-semibold hover:bg-opacity-90 transition-all">
+            <a href="{{ route('login') }}" class="block w-full bg-primary text-white px-6 py-3 rounded-lg text-center font-semibold hover:bg-opacity-90 transition-all">
                 Login
             </a>
         </div>

@@ -12,16 +12,16 @@
                 <div class="space-y-6 text-center md:text-left">
                     <div class="space-y-2">
                         <h1 class="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 leading-tight">
-                            Centro de Inteligência do Cacau
+                            {{ content($contents, 'hero', 'title', 'Centro de Inteligência do Cacau (CI Cacau)') }}
                         </h1>
                     </div>
                     
                     <h2 class="text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-tight">
-                        Conhecimento e inteligência para o desenvolvimento do cacau no Brasil
+                        {{ content($contents, 'hero', 'subtitle', 'Conhecimento e inteligência para o desenvolvimento do cacau no Brasil') }}
                     </h2>
                     
                     <p class="text-base md:text-lg text-gray-700 leading-relaxed">
-                        O Centro de Inteligência do Cacau (CICacau) é uma plataforma dedicada à coleta, análise e difusão de informações estratégicas sobre o setor cacaueiro. Nosso objetivo é conectar ciência, tecnologia e mercado para impulsionar a competitividade e sustentabilidade da cadeia produtiva do cacau.
+                        {{ content($contents, 'hero', 'description', 'O Centro de Inteligência do Cacau (CI Cacau) é uma plataforma dedicada à coleta, análise e difusão de informações estratégicas sobre o setor cacaueiro. Nosso objetivo é conectar ciência, tecnologia e mercado para impulsionar a competitividade e sustentabilidade da cadeia produtiva do cacau.') }}
                     </p>
                 </div>
 
@@ -58,10 +58,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                    Acompanhe o mercado
+                    {{ content($contents, 'mercado', 'title', 'Acompanhe o mercado') }}
                 </h2>
                 <h3 class="text-xl md:text-2xl font-semibold text-primary mb-6">
-                    Indicadores e estatísticas atualizadas
+                    {{ content($contents, 'mercado', 'subtitle', 'Indicadores e estatísticas atualizadas') }}
                 </h3>
             </div>
             
@@ -72,7 +72,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
-                    <p class="text-gray-700 font-medium">Preços, produção e exportações</p>
+                    <p class="text-gray-700 font-medium">{{ content($contents, 'mercado', 'card1_text', 'Preços, produção e exportações') }}</p>
                 </div>
                 
                 <div class="bg-gray-50 p-6 rounded-xl hover:shadow-lg transition-shadow">
@@ -81,7 +81,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
-                    <p class="text-gray-700 font-medium">Mercado nacional e internacional</p>
+                    <p class="text-gray-700 font-medium">{{ content($contents, 'mercado', 'card2_text', 'Mercado nacional e internacional') }}</p>
                 </div>
                 
                 <div class="bg-gray-50 p-6 rounded-xl hover:shadow-lg transition-shadow">
@@ -90,13 +90,13 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                         </svg>
                     </div>
-                    <p class="text-gray-700 font-medium">Análises conjunturais semanais</p>
+                    <p class="text-gray-700 font-medium">{{ content($contents, 'mercado', 'card3_text', 'Análises conjunturais semanais') }}</p>
                 </div>
             </div>
             
             <div class="text-center">
-                <a href="#" class="inline-flex items-center gap-2 bg-primary text-white px-8 py-4 rounded-lg font-semibold hover:bg-opacity-90 transition-all shadow-lg hover:shadow-xl text-lg">
-                    Acesse o Mercado 
+                <a href="{{ content($contents, 'mercado', 'button_link', '#') }}" class="inline-flex items-center gap-2 bg-primary text-white px-8 py-4 rounded-lg font-semibold hover:bg-opacity-90 transition-all shadow-lg hover:shadow-xl text-lg">
+                    {{ content($contents, 'mercado', 'button_text', 'Acesse o Mercado') }} 
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                     </svg>
@@ -110,13 +110,13 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                    Ciência e Tecnologia
+                    {{ content($contents, 'ciencia', 'title', 'Ciência e Tecnologia') }}
                 </h2>
                 <h3 class="text-xl md:text-2xl font-semibold text-primary mb-6">
-                    Produções técnico-científicas e inovação
+                    {{ content($contents, 'ciencia', 'subtitle', 'Produções técnico-científicas e inovação') }}
                 </h3>
                 <p class="text-lg text-gray-700 max-w-3xl mx-auto">
-                    Acesse artigos, livros, relatórios e projetos desenvolvidos por universidades, centros de pesquisa e profissionais do setor.
+                    {{ content($contents, 'ciencia', 'description', 'Acesse artigos, livros, relatórios e projetos desenvolvidos por universidades, centros de pesquisa e profissionais do setor.') }}
                 </p>
             </div>
             
@@ -159,8 +159,8 @@
             </div>
             
             <div class="text-center">
-                <a href="#" class="inline-flex items-center gap-2 bg-secondary text-gray-900 px-8 py-4 rounded-lg font-semibold hover:bg-opacity-90 transition-all shadow-lg hover:shadow-xl text-lg">
-                    Explore a produção científica 
+                <a href="{{ content($contents, 'ciencia', 'button_link', '#') }}" class="inline-flex items-center gap-2 bg-secondary text-gray-900 px-8 py-4 rounded-lg font-semibold hover:bg-opacity-90 transition-all shadow-lg hover:shadow-xl text-lg">
+                    {{ content($contents, 'ciencia', 'button_text', 'Explore a produção científica') }}
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                     </svg>
@@ -174,13 +174,13 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                    Notícias e Destaques
+                    {{ content($contents, 'noticias', 'title', 'Notícias e Destaques') }}
                 </h2>
                 <h3 class="text-xl md:text-2xl font-semibold text-primary mb-6">
-                    O que está acontecendo no mundo do cacau
+                    {{ content($contents, 'noticias', 'subtitle', 'O que está acontecendo no mundo do cacau') }}
                 </h3>
                 <p class="text-lg text-gray-700 max-w-3xl mx-auto">
-                    Fique por dentro de eventos, cursos, editais e as principais notícias sobre o setor.
+                    {{ content($contents, 'noticias', 'description', 'Fique por dentro de eventos, cursos, editais e as principais notícias sobre o setor.') }}
                 </p>
             </div>
             
@@ -247,8 +247,8 @@
             </div>
             
             <div class="text-center">
-                <a href="#" class="inline-flex items-center gap-2 bg-gray-900 text-white px-8 py-4 rounded-lg font-semibold hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl text-lg">
-                    Veja mais 
+                <a href="{{ content($contents, 'noticias', 'button_link', '#') }}" class="inline-flex items-center gap-2 bg-gray-900 text-white px-8 py-4 rounded-lg font-semibold hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl text-lg">
+                    {{ content($contents, 'noticias', 'button_text', 'Veja mais') }}
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                     </svg>
@@ -262,17 +262,17 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center text-white">
                 <h2 class="text-3xl md:text-4xl font-bold mb-4">
-                    Conecte-se com o CI Cacau
+                    {{ content($contents, 'conecte', 'title', 'Conecte-se com o CI Cacau') }}
                 </h2>
                 <h3 class="text-xl md:text-2xl font-semibold mb-6">
-                    Parceiros, instituições e profissionais unidos pelo desenvolvimento sustentável do cacau.
+                    {{ content($contents, 'conecte', 'subtitle', 'Parceiros, instituições e profissionais unidos pelo desenvolvimento sustentável do cacau.') }}
                 </h3>
                 <p class="text-lg mb-10 max-w-3xl mx-auto opacity-95">
-                    Faça parte desta rede de conhecimento e colaboração. Entre em contato conosco e descubra como podemos trabalhar juntos.
+                    {{ content($contents, 'conecte', 'description', 'Faça parte desta rede de conhecimento e colaboração. Entre em contato conosco e descubra como podemos trabalhar juntos.') }}
                 </p>
                 
-                <a href="#" class="inline-flex items-center gap-2 bg-white text-primary px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl text-lg">
-                    Fale Conosco 
+                <a href="{{ content($contents, 'conecte', 'button_link', '#') }}" class="inline-flex items-center gap-2 bg-white text-primary px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl text-lg">
+                    {{ content($contents, 'conecte', 'button_text', 'Fale Conosco') }} 
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                     </svg>
