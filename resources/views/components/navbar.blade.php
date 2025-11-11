@@ -86,7 +86,7 @@
                          x-transition:leave-start="opacity-100 scale-100"
                          x-transition:leave-end="opacity-0 scale-95"
                          class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-2 z-50">
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Notícias</a>
+                        <a href="{{ route('noticias.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Notícias</a>
                         <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Cursos e Eventos</a>
                         <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Entrevistas</a>
                     </div>
@@ -178,8 +178,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                     </svg>
                 </button>
-                <div x-show="open" class="pl-6 space-y-1">
-                    <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Notícias</a>
+                <div x-show="destacandoOpen" class="pl-6 space-y-1">
+                    <a href="{{ route('noticias.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Notícias</a>
                     <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Cursos e Eventos</a>
                     <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Entrevistas</a>
                 </div>

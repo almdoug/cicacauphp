@@ -32,17 +32,23 @@
             </div>
         </a>
 
-        <a href="{{ route('home') }}" target="_blank" class="block bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-4 sm:p-6 group">
-            <div class="flex items-center gap-3 sm:gap-4">
-                <div class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-secondary bg-opacity-20 rounded-lg group-hover:bg-opacity-30 transition-colors flex-shrink-0">
-                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+        <a href="{{ route('admin.news.index') }}" class="block bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-4 sm:p-6 group">
+            <div class="flex items-center gap-3 sm:gap-4 mb-4">
+                <div class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-secondary bg-opacity-20 rounded-lg group-hover:bg-secondary group-hover:bg-opacity-100 transition-colors flex-shrink-0">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
                     </svg>
                 </div>
                 <div class="min-w-0">
-                    <h4 class="font-semibold text-gray-900 text-sm sm:text-base">Ver Site</h4>
-                    <p class="text-xs sm:text-sm text-gray-600">Visualizar site público</p>
+                    <h4 class="font-semibold text-gray-900 text-sm sm:text-base">Gerenciar Notícias</h4>
+                    <p class="text-xs sm:text-sm text-gray-600">{{ $newsCount }} notícias ({{ $publishedNewsCount }} publicadas)</p>
                 </div>
+            </div>
+            <div class="text-xs sm:text-sm text-gray-600 group-hover:text-secondary transition-colors flex items-center gap-1">
+                Ver todas as notícias
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
             </div>
         </a>
 

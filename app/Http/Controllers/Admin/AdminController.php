@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\News;
 use App\Models\PageContent;
 use Illuminate\Http\Request;
 
@@ -18,7 +19,11 @@ class AdminController extends Controller
             'sobre' => 'Sobre',
         ];
 
-        return view('admin.dashboard', compact('pages'));
+        $newsCount = News::count();
+        $publishedNewsCount = News::published()->count();
+        $draftNewsCount = News::draft()->count();
+
+        return view('admin.dashboard', compact('pages', 'newsCount', 'publishedNewsCount', 'draftNewsCount'));
     }
 
     /**
