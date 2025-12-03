@@ -160,65 +160,43 @@
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
-                <!-- Card de Notícia 1 -->
-                <div class="bg-gray-50 rounded-xl overflow-hidden hover:shadow-xl transition-all group">
-                    <div class="h-48 bg-gradient-to-br from-primary to-secondary"></div>
-                    <div class="p-6">
-                        <span class="text-sm text-primary font-semibold">Mercado</span>
-                        <h4 class="text-xl font-bold text-gray-900 mt-2 mb-3 group-hover:text-primary transition-colors">
-                            Título da Notícia em Destaque
-                        </h4>
-                        <p class="text-gray-700 mb-4 line-clamp-3">
-                            Resumo da notícia com informações relevantes sobre o setor cacaueiro. Esta é uma prévia do conteúdo completo.
-                        </p>
-                        <a href="#" class="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all">
-                            Ler mais 
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                            </svg>
-                        </a>
+                @forelse($news as $item)
+                    <!-- Card de Notícia -->
+                    <div class="bg-gray-50 rounded-xl overflow-hidden hover:shadow-xl transition-all group">
+                        @if($item->image)
+                            <div class="h-48 overflow-hidden">
+                                <img 
+                                    src="{{ asset('storage/' . $item->image) }}" 
+                                    alt="{{ $item->title }}"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                >
+                            </div>
+                        @else
+                            <div class="h-48 bg-gradient-to-br from-primary to-secondary"></div>
+                        @endif
+                        <div class="p-6">
+                            @if($item->source)
+                                <span class="text-sm text-primary font-semibold">{{ $item->source }}</span>
+                            @endif
+                            <h4 class="text-xl font-bold text-gray-900 mt-2 mb-3 group-hover:text-primary transition-colors">
+                                {{ Str::limit($item->title, 60) }}
+                            </h4>
+                            <p class="text-gray-700 mb-4 line-clamp-3">
+                                {{ $item->summary }}
+                            </p>
+                            <a href="{{ route('noticias.show', $item->slug) }}" class="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all">
+                                Ler mais 
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </a>
+                        </div>
                     </div>
-                </div>
-                
-                <!-- Card de Notícia 2 -->
-                <div class="bg-gray-50 rounded-xl overflow-hidden hover:shadow-xl transition-all group">
-                    <div class="h-48 bg-gradient-to-br from-secondary to-primary"></div>
-                    <div class="p-6">
-                        <span class="text-sm text-primary font-semibold">Tecnologia</span>
-                        <h4 class="text-xl font-bold text-gray-900 mt-2 mb-3 group-hover:text-primary transition-colors">
-                            Inovações no Cultivo do Cacau
-                        </h4>
-                        <p class="text-gray-700 mb-4 line-clamp-3">
-                            Novas técnicas e tecnologias estão revolucionando a produção de cacau no Brasil.
-                        </p>
-                        <a href="#" class="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all">
-                            Ler mais 
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                            </svg>
-                        </a>
+                @empty
+                    <div class="col-span-3 text-center py-12">
+                        <p class="text-gray-600 text-lg">Nenhuma notícia publicada ainda.</p>
                     </div>
-                </div>
-                
-                <!-- Card de Notícia 3 -->
-                <div class="bg-gray-50 rounded-xl overflow-hidden hover:shadow-xl transition-all group">
-                    <div class="h-48 bg-gradient-to-br from-gray-700 to-gray-900"></div>
-                    <div class="p-6">
-                        <span class="text-sm text-primary font-semibold">Eventos</span>
-                        <h4 class="text-xl font-bold text-gray-900 mt-2 mb-3 group-hover:text-primary transition-colors">
-                            Próximos Cursos e Capacitações
-                        </h4>
-                        <p class="text-gray-700 mb-4 line-clamp-3">
-                            Confira a agenda de cursos, eventos e oportunidades de capacitação no setor.
-                        </p>
-                        <a href="#" class="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all">
-                            Ler mais 
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
+                @endforelse
             </div>
             
             <div class="text-center">

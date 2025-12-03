@@ -4,20 +4,13 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\NewsController as AdminNewsController;
 use App\Http\Controllers\Admin\PageContentController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsController;
-use App\Models\PageContent;
 use Illuminate\Support\Facades\Route;
 
 // Public Routes
-Route::get('/', function () {
-    $contents = PageContent::getPageContents('home');
-    return view('welcome', compact('contents'));
-})->name('home');
-
-Route::get('/sobre', function () {
-    $contents = PageContent::getPageContents('sobre');
-    return view('sobre', compact('contents'));
-})->name('sobre');
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/sobre', [HomeController::class, 'sobre'])->name('sobre');
 
 // News Routes
 Route::get('/noticias', [NewsController::class, 'index'])->name('noticias.index');
