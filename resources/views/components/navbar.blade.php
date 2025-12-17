@@ -43,9 +43,9 @@
                          x-transition:leave-start="opacity-100 scale-100"
                          x-transition:leave-end="opacity-0 scale-95"
                          class="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-lg py-2 z-50">
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Pesquisa</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Patentes</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Editais</a>
+                        <a href="{{ route('pesquisa.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Pesquisa</a>
+                        <a href="{{ route('patentes.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Patentes</a>
+                        <a href="{{ route('editais.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Editais</a>
                     </div>
                 </div>
 
@@ -150,9 +150,9 @@
                     </svg>
                 </button>
                 <div x-show="open" class="pl-6 space-y-1">
-                    <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Pesquisa</a>
-                    <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Patentes</a>
-                    <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Editais</a>
+                    <a href="{{ route('pesquisa.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Pesquisa</a>
+                    <a href="{{ route('patentes.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Patentes</a>
+                    <a href="{{ route('editais.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Editais</a>
                 </div>
             </div>
 
