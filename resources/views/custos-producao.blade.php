@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('meta_title', 'Patentes | CI Cacau')
-@section('meta_description', 'Conheça as patentes relacionadas à cadeia produtiva do cacau. Inovações tecnológicas e propriedade intelectual do setor cacaueiro brasileiro.')
+@section('meta_title', 'Custos de Produção | CI Cacau')
+@section('meta_description', 'Informações sobre custos de produção do cacau: insumos, mão de obra, equipamentos, transporte e processamento.')
 
 @section('content')
 <!-- Hero Section -->
@@ -9,10 +9,10 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center">
             <h1 class="text-4xl md:text-5xl font-bold mb-4">
-                Patentes
+                Custos de Produção
             </h1>
             <p class="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto">
-                Inovações e propriedade intelectual relacionadas ao cacau
+                Informações sobre custos de produção do cacau: insumos, mão de obra, equipamentos e mais
             </p>
         </div>
     </div>
@@ -31,7 +31,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
                 </svg>
                 Filtros
-                @if(request()->hasAny(['busca', 'status']))
+                @if(request()->hasAny(['search', 'type', 'region', 'period']))
                     <span class="px-2 py-0.5 bg-primary text-white text-xs rounded-full">Ativos</span>
                 @endif
             </span>
@@ -42,32 +42,62 @@
 
         <!-- Formulário de filtros -->
         <form 
-            action="{{ route('patentes.index') }}" 
+            action="{{ route('custos.index') }}" 
             method="GET" 
-            class="flex-col md:flex-row gap-4 mt-4 md:mt-0" 
+            class="flex-col md:flex-row gap-4 flex-wrap mt-4 md:mt-0" 
             :class="{ 'hidden md:flex': !filtersOpen, 'flex': filtersOpen }"
         >
             <!-- Busca -->
-            <div class="flex-1">
+            <div class="flex-1 min-w-[200px]">
                 <input 
                     type="text" 
-                    name="busca" 
-                    value="{{ request('busca') }}"
-                    placeholder="Buscar por título, inventor, número da patente..."
+                    name="search" 
+                    value="{{ request('search') }}"
+                    placeholder="Buscar por título, fonte..."
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
                 >
             </div>
             
-            <!-- Status -->
+            <!-- Tipo -->
             <div class="w-full md:w-48">
                 <select 
-                    name="status" 
+                    name="type" 
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
                 >
-                    <option value="">Todos os status</option>
-                    @foreach($statuses as $key => $label)
-                        <option value="{{ $key }}" {{ request('status') == $key ? 'selected' : '' }}>
+                    <option value="">Todos os tipos</option>
+                    @foreach($types as $key => $label)
+                        <option value="{{ $key }}" {{ request('type') == $key ? 'selected' : '' }}>
                             {{ $label }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            
+            <!-- Região -->
+            <div class="w-full md:w-40">
+                <select 
+                    name="region" 
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                >
+                    <option value="">Todas as regiões</option>
+                    @foreach($regions as $region)
+                        <option value="{{ $region }}" {{ request('region') == $region ? 'selected' : '' }}>
+                            {{ $region }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Período -->
+            <div class="w-full md:w-36">
+                <select 
+                    name="period" 
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                >
+                    <option value="">Todos os períodos</option>
+                    @foreach($periods as $period)
+                        <option value="{{ $period }}" {{ request('period') == $period ? 'selected' : '' }}>
+                            {{ $period }}
                         </option>
                     @endforeach
                 </select>
@@ -81,9 +111,9 @@
                 Filtrar
             </button>
             
-            @if(request()->hasAny(['busca', 'status']))
+            @if(request()->hasAny(['search', 'type', 'region', 'period']))
                 <a 
-                    href="{{ route('patentes.index') }}" 
+                    href="{{ route('custos.index') }}" 
                     class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all font-medium text-center"
                 >
                     Limpar
@@ -93,22 +123,22 @@
     </div>
 </section>
 
-<!-- Lista de Patentes -->
+<!-- Lista de Custos -->
 <section class="py-12 md:py-16 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        @if($patents->count() > 0)
-            <!-- Grid de Patentes -->
+        @if($costs->count() > 0)
+            <!-- Grid de Custos -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                @foreach($patents as $patent)
+                @foreach($costs as $cost)
                     <article class="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group flex flex-col border border-gray-100">
-                        <!-- Header com status -->
+                        <!-- Header com tipo -->
                         <div class="p-4 bg-gradient-to-r from-primary/10 to-secondary/10 border-b border-gray-100">
                             <div class="flex items-center justify-between">
-                                <span class="px-3 py-1 bg-{{ $patent->getStatusColor() }}-100 text-{{ $patent->getStatusColor() }}-800 text-xs font-semibold rounded-full">
-                                    {{ $patent->getStatusName() }}
+                                <span class="px-3 py-1 bg-primary text-white text-xs font-semibold rounded-full">
+                                    {{ $cost->getTypeName() }}
                                 </span>
-                                @if($patent->patent_number)
-                                    <span class="text-sm text-gray-600 font-mono">{{ $patent->patent_number }}</span>
+                                @if($cost->period)
+                                    <span class="text-sm text-gray-600 font-medium">{{ $cost->period }}</span>
                                 @endif
                             </div>
                         </div>
@@ -117,73 +147,64 @@
                         <div class="p-6 flex-1 flex flex-col">
                             <!-- Título -->
                             <h2 class="text-lg md:text-xl font-bold text-gray-900 mb-3 group-hover:text-primary transition-colors line-clamp-2">
-                                <a href="{{ route('patentes.show', $patent->slug) }}">
-                                    {{ $patent->title }}
+                                <a href="{{ route('custos.show', $cost->slug) }}">
+                                    {{ $cost->title }}
                                 </a>
                             </h2>
 
-                            <!-- Inventores -->
-                            <div class="flex items-start gap-2 text-sm text-gray-600 mb-3">
-                                <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                                </svg>
-                                <span class="line-clamp-1">{{ $patent->inventors }}</span>
-                            </div>
-
-                            <!-- Depositante -->
-                            @if($patent->applicant)
+                            <!-- Região -->
+                            @if($cost->region)
                                 <div class="flex items-start gap-2 text-sm text-gray-600 mb-3">
                                     <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                     </svg>
-                                    <span class="line-clamp-1">{{ $patent->applicant }}</span>
+                                    <span class="line-clamp-1">{{ $cost->region }}</span>
+                                </div>
+                            @endif
+
+                            <!-- Fonte -->
+                            @if($cost->source)
+                                <div class="flex items-start gap-2 text-sm text-gray-600 mb-3">
+                                    <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                                    </svg>
+                                    <span class="line-clamp-1">{{ $cost->source }}</span>
                                 </div>
                             @endif
 
                             <!-- Resumo -->
                             <p class="text-gray-600 mb-4 line-clamp-3 flex-1 text-sm">
-                                {{ $patent->summary }}
+                                {{ $cost->summary }}
                             </p>
 
-                            <!-- Datas -->
-                            <div class="flex flex-wrap gap-3 text-xs text-gray-500 mb-4">
-                                @if($patent->filing_date)
-                                    <span class="flex items-center gap-1">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                        </svg>
-                                        Depósito: {{ $patent->getFormattedFilingDate() }}
-                                    </span>
-                                @endif
-                                @if($patent->grant_date)
-                                    <span class="flex items-center gap-1">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                        </svg>
-                                        Concessão: {{ $patent->getFormattedGrantDate() }}
-                                    </span>
-                                @endif
-                            </div>
+                            <!-- Valor em destaque -->
+                            @if($cost->value)
+                                <div class="mb-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-100">
+                                    <p class="text-xs text-gray-500 mb-1">Valor</p>
+                                    <p class="text-xl font-bold text-green-700">{{ $cost->getFormattedValue() }}</p>
+                                </div>
+                            @endif
 
                             <!-- Ações -->
                             <div class="flex items-center justify-between pt-4 border-t border-gray-200">
                                 <div class="flex items-center gap-2">
-                                    @if($patent->file)
+                                    @if($cost->file)
                                         <a 
-                                            href="{{ $patent->getFileUrl() }}" 
+                                            href="{{ $cost->getFileUrl() }}" 
                                             target="_blank"
                                             class="inline-flex items-center gap-1 text-primary hover:text-primary/80 text-sm font-medium"
-                                            title="Download PDF"
+                                            title="Download Arquivo"
                                         >
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                             </svg>
-                                            PDF
+                                            Arquivo
                                         </a>
                                     @endif
-                                    @if($patent->external_link)
+                                    @if($cost->external_link)
                                         <a 
-                                            href="{{ $patent->external_link }}" 
+                                            href="{{ $cost->external_link }}" 
                                             target="_blank"
                                             class="inline-flex items-center gap-1 text-gray-600 hover:text-primary text-sm font-medium"
                                             title="Link externo"
@@ -195,10 +216,9 @@
                                         </a>
                                     @endif
                                 </div>
-
                                 <a 
-                                    href="{{ route('patentes.show', $patent->slug) }}" 
-                                    class="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all text-sm"
+                                    href="{{ route('custos.show', $cost->slug) }}" 
+                                    class="inline-flex items-center gap-1 text-primary hover:text-primary/80 font-semibold text-sm transition-colors"
                                 >
                                     Ver mais
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -212,28 +232,33 @@
             </div>
 
             <!-- Paginação -->
-            @if($patents->hasPages())
-                <div class="mt-12">
-                    {{ $patents->links() }}
+            @if($costs->hasPages())
+                <div class="mt-8 md:mt-12">
+                    {{ $costs->withQueryString()->links() }}
                 </div>
             @endif
         @else
-            <!-- Estado Vazio -->
-            <div class="text-center py-16">
-                <svg class="w-24 h-24 text-gray-400 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+            <!-- Estado vazio -->
+            <div class="text-center py-12">
+                <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                 </svg>
-                <h3 class="text-2xl font-bold text-gray-900 mb-2">Nenhuma patente encontrada</h3>
-                <p class="text-gray-600 mb-6">
-                    @if(request()->hasAny(['busca', 'status']))
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Nenhum custo de produção encontrado</h3>
+                <p class="text-gray-600 mb-4">
+                    @if(request()->hasAny(['search', 'type', 'region', 'period']))
                         Tente ajustar os filtros de busca.
                     @else
-                        Em breve publicaremos patentes relacionadas ao cacau.
+                        Em breve publicaremos informações sobre custos de produção.
                     @endif
                 </p>
-                <a href="{{ route('home') }}" class="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all">
-                    Voltar ao Início
-                </a>
+                @if(request()->hasAny(['search', 'type', 'region', 'period']))
+                    <a href="{{ route('custos.index') }}" class="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        Limpar filtros
+                    </a>
+                @endif
             </div>
         @endif
     </div>

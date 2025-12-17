@@ -19,9 +19,34 @@
 </section>
 
 <!-- Filtros -->
-<section class="py-6 bg-gray-50 border-b">
+<section class="py-4 md:py-6 bg-gray-50 border-b border-gray-200" x-data="{ filtersOpen: false }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <form action="{{ route('editais.index') }}" method="GET" class="flex flex-col md:flex-row gap-4 flex-wrap">
+        <!-- Botão toggle mobile -->
+        <button 
+            @click="filtersOpen = !filtersOpen" 
+            class="md:hidden w-full flex items-center justify-between px-4 py-3 bg-white rounded-lg border border-gray-300 text-gray-700 font-medium"
+        >
+            <span class="flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                </svg>
+                Filtros
+                @if(request()->hasAny(['busca', 'tipo', 'status', 'abertos']))
+                    <span class="px-2 py-0.5 bg-primary text-white text-xs rounded-full">Ativos</span>
+                @endif
+            </span>
+            <svg class="w-5 h-5 transition-transform" :class="{ 'rotate-180': filtersOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+        </button>
+
+        <!-- Formulário de filtros -->
+        <form 
+            action="{{ route('editais.index') }}" 
+            method="GET" 
+            class="flex-col md:flex-row gap-4 flex-wrap mt-4 md:mt-0" 
+            :class="{ 'hidden md:flex': !filtersOpen, 'flex': filtersOpen }"
+        >
             <!-- Busca -->
             <div class="flex-1 min-w-[200px]">
                 <input 

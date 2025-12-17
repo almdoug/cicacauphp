@@ -8,6 +8,8 @@ use App\Models\PageContent;
 use App\Models\Research;
 use App\Models\Patent;
 use App\Models\PublicNotice;
+use App\Models\ProductionCost;
+use App\Models\MarketData;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -39,6 +41,14 @@ class AdminController extends Controller
         $publicNoticeCount = PublicNotice::count();
         $openPublicNoticeCount = PublicNotice::published()->where('status', 'aberto')->count();
 
+        // Production Costs stats (Custos de Produção)
+        $productionCostCount = ProductionCost::count();
+        $publishedProductionCostCount = ProductionCost::published()->count();
+
+        // Market Data stats (Dados de Mercado)
+        $marketDataCount = MarketData::count();
+        $publishedMarketDataCount = MarketData::published()->count();
+
         return view('admin.dashboard', compact(
             'pages', 
             'newsCount', 
@@ -49,7 +59,11 @@ class AdminController extends Controller
             'patentCount',
             'publishedPatentCount',
             'publicNoticeCount',
-            'openPublicNoticeCount'
+            'openPublicNoticeCount',
+            'productionCostCount',
+            'publishedProductionCostCount',
+            'marketDataCount',
+            'publishedMarketDataCount'
         ));
     }
 
