@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\PatentController as AdminPatentController;
 use App\Http\Controllers\Admin\PublicNoticeController as AdminPublicNoticeController;
 use App\Http\Controllers\Admin\ProductionCostController as AdminProductionCostController;
 use App\Http\Controllers\Admin\MarketDataController as AdminMarketDataController;
+use App\Http\Controllers\Admin\CourseEventController as AdminCourseEventController;
+use App\Http\Controllers\Admin\InterviewController as AdminInterviewController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsController;
@@ -16,6 +18,9 @@ use App\Http\Controllers\PatentController;
 use App\Http\Controllers\PublicNoticeController;
 use App\Http\Controllers\ProductionCostController;
 use App\Http\Controllers\MarketDataController;
+use App\Http\Controllers\CourseEventController;
+use App\Http\Controllers\InterviewController;
+use App\Http\Controllers\ContactController;
 use Illuminate\Support\Facades\Route;
 
 // Public Routes
@@ -45,6 +50,18 @@ Route::get('/custos/{slug}', [ProductionCostController::class, 'show'])->name('c
 // Market Data Routes (Mercado Nacional e Internacional)
 Route::get('/mercado', [MarketDataController::class, 'index'])->name('mercado.index');
 Route::get('/mercado/{slug}', [MarketDataController::class, 'show'])->name('mercado.show');
+
+// Courses and Events Routes (Cursos e Eventos)
+Route::get('/cursos-eventos', [CourseEventController::class, 'index'])->name('cursos-eventos.index');
+Route::get('/cursos-eventos/{slug}', [CourseEventController::class, 'show'])->name('cursos-eventos.show');
+
+// Interviews Routes (Entrevistas)
+Route::get('/entrevistas', [InterviewController::class, 'index'])->name('entrevistas.index');
+Route::get('/entrevistas/{slug}', [InterviewController::class, 'show'])->name('entrevistas.show');
+
+// Contact Routes (Contato)
+Route::get('/contato', [ContactController::class, 'index'])->name('contato');
+Route::post('/contato', [ContactController::class, 'send'])->name('contato.send');
 
 // Auth Routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -83,4 +100,12 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     // Market Data Management (Mercado Nacional e Internacional)
     Route::resource('market-data', AdminMarketDataController::class);
     Route::patch('/market-data/{market_datum}/toggle-publish', [AdminMarketDataController::class, 'togglePublish'])->name('market-data.toggle-publish');
+    
+    // Courses and Events Management (Cursos e Eventos)
+    Route::resource('courses-events', AdminCourseEventController::class);
+    Route::patch('/courses-events/{courses_event}/toggle-publish', [AdminCourseEventController::class, 'togglePublish'])->name('courses-events.toggle-publish');
+    
+    // Interviews Management (Entrevistas)
+    Route::resource('interviews', AdminInterviewController::class);
+    Route::patch('/interviews/{interview}/toggle-publish', [AdminInterviewController::class, 'togglePublish'])->name('interviews.toggle-publish');
 });

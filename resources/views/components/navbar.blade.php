@@ -87,12 +87,12 @@
                          x-transition:leave-end="opacity-0 scale-95"
                          class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-2 z-50">
                         <a href="{{ route('noticias.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Notícias</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Cursos e Eventos</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Entrevistas</a>
+                        <a href="{{ route('cursos-eventos.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Cursos e Eventos</a>
+                        <a href="{{ route('entrevistas.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors">Entrevistas</a>
                     </div>
                 </div>
 
-                <a href="#" class="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium transition-colors">
+                <a href="{{ route('contato') }}" class="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium transition-colors">
                     Contato
                 </a>
             </div>
@@ -178,14 +178,14 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                     </svg>
                 </button>
-                <div x-show="destacandoOpen" class="pl-6 space-y-1">
+                <div x-show="open" class="pl-6 space-y-1">
                     <a href="{{ route('noticias.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Notícias</a>
-                    <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Cursos e Eventos</a>
-                    <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Entrevistas</a>
+                    <a href="{{ route('cursos-eventos.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Cursos e Eventos</a>
+                    <a href="{{ route('entrevistas.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary rounded-md">Entrevistas</a>
                 </div>
             </div>
 
-            <a href="#" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+            <a href="{{ route('contato') }}" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
                 Contato
             </a>
         </div>
