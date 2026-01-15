@@ -35,7 +35,69 @@
                                 {{ str_replace('_', ' ', $item->key) }}
                             </label>
                             
-                            @if($item->type === 'html')
+                            @if($item->type === 'array')
+                                <!-- Dynamic Team Members Input -->
+                                <div class="space-y-4">
+                                    <div id="team-members-container">
+                                        @php
+                                            $members = is_string($item->value) ? json_decode($item->value, true) : $item->value;
+                                            $members = is_array($members) ? $members : [];
+                                            if (empty($members)) {
+                                                $members = [['name' => '', 'role' => '']];
+                                            }
+                                        @endphp
+                                        
+                                        @foreach($members as $index => $member)
+                                            <div class="team-member-item bg-gray-50 border border-gray-300 rounded-lg p-4" data-index="{{ $index }}">
+                                                <div class="flex items-start gap-3">
+                                                    <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                        <div>
+                                                            <label class="block text-xs font-medium text-gray-600 mb-1">Nome</label>
+                                                            <input 
+                                                                type="text" 
+                                                                name="team_members[{{ $index }}][name]"
+                                                                value="{{ $member['name'] ?? '' }}"
+                                                                placeholder="Nome do membro"
+                                                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                            >
+                                                        </div>
+                                                        <div>
+                                                            <label class="block text-xs font-medium text-gray-600 mb-1">Cargo/Função</label>
+                                                            <input 
+                                                                type="text" 
+                                                                name="team_members[{{ $index }}][role]"
+                                                                value="{{ $member['role'] ?? '' }}"
+                                                                placeholder="Ex: Coordenador(a), Pesquisador(a)"
+                                                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                            >
+                                                        </div>
+                                                    </div>
+                                                    <button 
+                                                        type="button" 
+                                                        class="remove-member mt-6 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                        title="Remover membro"
+                                                    >
+                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    
+                                    <button 
+                                        type="button" 
+                                        id="add-team-member"
+                                        class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+                                    >
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                        </svg>
+                                        Adicionar Membro
+                                    </button>
+                                </div>
+                            @elseif($item->type === 'html')
                                 <div class="mb-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                                     <p class="text-xs text-blue-800 flex items-center gap-2">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -145,5 +207,89 @@
     } else {
         setTimeout(initTinyMCE, 500);
     }
+
+    // Dynamic Team Members Management
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('team-members-container');
+        const addButton = document.getElementById('add-team-member');
+        
+        if (!container || !addButton) return;
+        
+        let memberIndex = container.querySelectorAll('.team-member-item').length;
+        
+        // Add new member
+        addButton.addEventListener('click', function() {
+            const newMember = document.createElement('div');
+            newMember.className = 'team-member-item bg-gray-50 border border-gray-300 rounded-lg p-4';
+            newMember.setAttribute('data-index', memberIndex);
+            newMember.innerHTML = `
+                <div class="flex items-start gap-3">
+                    <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Nome</label>
+                            <input 
+                                type="text" 
+                                name="team_members[${memberIndex}][name]"
+                                placeholder="Nome do membro"
+                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                            >
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Cargo/Função</label>
+                            <input 
+                                type="text" 
+                                name="team_members[${memberIndex}][role]"
+                                placeholder="Ex: Coordenador(a), Pesquisador(a)"
+                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                            >
+                        </div>
+                    </div>
+                    <button 
+                        type="button" 
+                        class="remove-member mt-6 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Remover membro"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(newMember);
+            memberIndex++;
+            
+            // Add animation
+            newMember.style.opacity = '0';
+            setTimeout(() => {
+                newMember.style.transition = 'opacity 0.3s';
+                newMember.style.opacity = '1';
+            }, 10);
+        });
+        
+        // Remove member (event delegation)
+        container.addEventListener('click', function(e) {
+            const removeBtn = e.target.closest('.remove-member');
+            if (!removeBtn) return;
+            
+            const memberItem = removeBtn.closest('.team-member-item');
+            const allMembers = container.querySelectorAll('.team-member-item');
+            
+            // Keep at least one member
+            if (allMembers.length <= 1) {
+                alert('Deve haver pelo menos um membro na equipe.');
+                return;
+            }
+            
+            // Animate removal
+            memberItem.style.transition = 'opacity 0.3s, transform 0.3s';
+            memberItem.style.opacity = '0';
+            memberItem.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                memberItem.remove();
+            }, 300);
+        });
+    });
 </script>
 @endpush

@@ -96,8 +96,31 @@
                 {{ content($contents ?? [], 'equipe', 'title', 'Equipe') }}
             </h2>
             
-            <div>
-                {!! content($contents ?? [], 'equipe', 'conteudo', '<div class="mb-12"><h3 class="text-2xl font-bold text-primary mb-6">Coordenação</h3><div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"><p class="text-lg font-semibold text-gray-800">Naisy Silva Soares</p><p class="text-gray-600 mt-1">Coordenadora</p></div></div><div><h3 class="text-2xl font-bold text-primary mb-6">Pesquisadoras</h3><div class="grid md:grid-cols-2 gap-6"><div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"><p class="text-lg font-semibold text-gray-800">Adrielle Victoria Soares Alves</p><p class="text-gray-600 mt-1">Pesquisadora</p></div><div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"><p class="text-lg font-semibold text-gray-800">Zina Cáceres Benevides</p><p class="text-gray-600 mt-1">Pesquisadora</p></div></div></div>') !!}
+            <div class="space-y-4">
+                @php
+                    $teamMembersJson = content($contents ?? [], 'equipe', 'conteudo', '[]');
+                    $teamMembers = is_string($teamMembersJson) ? json_decode($teamMembersJson, true) : $teamMembersJson;
+                    $teamMembers = is_array($teamMembers) ? $teamMembers : [];
+                @endphp
+                
+                @if(!empty($teamMembers))
+                    @foreach($teamMembers as $member)
+                        @if(!empty($member['name']) || !empty($member['role']))
+                            <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                                @if(!empty($member['name']))
+                                    <p class="text-lg font-semibold text-gray-800">{{ $member['name'] }}</p>
+                                @endif
+                                @if(!empty($member['role']))
+                                    <p class="text-gray-600 mt-1">{{ $member['role'] }}</p>
+                                @endif
+                            </div>
+                        @endif
+                    @endforeach
+                @else
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <p class="text-gray-600">Nenhum membro cadastrado.</p>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

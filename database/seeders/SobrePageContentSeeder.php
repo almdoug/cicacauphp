@@ -35,7 +35,11 @@ class SobrePageContentSeeder extends Seeder
             
             // Equipe
             ['page' => 'sobre', 'section' => 'equipe', 'key' => 'title', 'value' => 'Equipe', 'type' => 'text'],
-            ['page' => 'sobre', 'section' => 'equipe', 'key' => 'conteudo', 'value' => '<div class="mb-12"><h3 class="text-2xl font-bold text-primary mb-6">Coordenação</h3><div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"><p class="text-lg font-semibold text-gray-800">Naisy Silva Soares</p><p class="text-gray-600 mt-1">Coordenadora</p></div></div><div><h3 class="text-2xl font-bold text-primary mb-6">Pesquisadoras</h3><div class="grid md:grid-cols-2 gap-6"><div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"><p class="text-lg font-semibold text-gray-800">Adrielle Victoria Soares Alves</p><p class="text-gray-600 mt-1">Pesquisadora</p></div><div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"><p class="text-lg font-semibold text-gray-800">Zina Cáceres Benevides</p><p class="text-gray-600 mt-1">Pesquisadora</p></div></div></div>', 'type' => 'html'],
+            ['page' => 'sobre', 'section' => 'equipe', 'key' => 'conteudo', 'value' => json_encode([
+                ['name' => 'Naisy Silva Soares', 'role' => 'Coordenadora'],
+                ['name' => 'Adrielle Victoria Soares Alves', 'role' => 'Pesquisadora'],
+                ['name' => 'Zina Cáceres Benevides', 'role' => 'Pesquisadora'],
+            ]), 'type' => 'array'],
             
             // CTA
             ['page' => 'sobre', 'section' => 'cta', 'key' => 'title', 'value' => 'Quer saber mais sobre o CI Cacau?', 'type' => 'text'],
