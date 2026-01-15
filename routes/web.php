@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\ProductionCostController as AdminProductionCostCo
 use App\Http\Controllers\Admin\MarketDataController as AdminMarketDataController;
 use App\Http\Controllers\Admin\CourseEventController as AdminCourseEventController;
 use App\Http\Controllers\Admin\InterviewController as AdminInterviewController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsController;
@@ -72,10 +73,19 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     
-    // Page Content Management
-    Route::get('/pages', [AdminController::class, 'pages'])->name('pages.index');
-    Route::get('/pages/{page}/edit', [PageContentController::class, 'edit'])->name('pages.edit');
-    Route::put('/pages/{page}', [PageContentController::class, 'update'])->name('pages.update');
+    // User Management (Only superadmin)
+    Route::middleware(['role:superadmin'])->group(function () {
+        Route::resource('users', AdminUserController::class)->except(['show']);
+        Route::get('/users/{user}/change-password', [AdminUserController::class, 'changePassword'])->name('users.change-password');
+        Route::put('/users/{user}/update-password', [AdminUserController::class, 'updatePassword'])->name('users.update-password');
+    });
+    
+    // Page Content Management (Admin and Superadmin only)
+    Route::middleware(['role:admin,superadmin'])->group(function () {
+        Route::get('/pages', [AdminController::class, 'pages'])->name('pages.index');
+        Route::get('/pages/{page}/edit', [PageContentController::class, 'edit'])->name('pages.edit');
+        Route::put('/pages/{page}', [PageContentController::class, 'update'])->name('pages.update');
+    });
     
     // News Management
     Route::resource('news', AdminNewsController::class);

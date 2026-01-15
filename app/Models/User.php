@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'is_admin',
+        'role',
     ];
 
     /**
@@ -45,5 +46,37 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Verificar se o usuário é superadmin
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'superadmin';
+    }
+
+    /**
+     * Verificar se o usuário é admin ou superadmin
+     */
+    public function isAdmin(): bool
+    {
+        return in_array($this->role, ['admin', 'superadmin']);
+    }
+
+    /**
+     * Verificar se o usuário pode gerenciar usuários
+     */
+    public function canManageUsers(): bool
+    {
+        return $this->role === 'superadmin';
+    }
+
+    /**
+     * Verificar se o usuário pode editar páginas
+     */
+    public function canEditPages(): bool
+    {
+        return in_array($this->role, ['admin', 'superadmin']);
     }
 }

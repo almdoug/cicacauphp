@@ -12,6 +12,29 @@
 
     <!-- Quick Actions -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        @if(Auth::user()->canManageUsers())
+        <a href="{{ route('admin.users.index') }}" class="block bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-4 sm:p-6 group">
+            <div class="flex items-center gap-3 sm:gap-4 mb-4">
+                <div class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-lg group-hover:bg-purple-500 transition-colors flex-shrink-0">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-purple-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                </div>
+                <div class="min-w-0">
+                    <h4 class="font-semibold text-gray-900 text-sm sm:text-base">Gerenciar Usuários</h4>
+                    <p class="text-xs sm:text-sm text-gray-600">Criar e editar usuários</p>
+                </div>
+            </div>
+            <div class="text-xs sm:text-sm text-gray-600 group-hover:text-purple-500 transition-colors flex items-center gap-1">
+                Ver todos os usuários
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </div>
+        </a>
+        @endif
+
+        @if(Auth::user()->canEditPages())
         <a href="{{ route('admin.pages.index') }}" class="block bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-4 sm:p-6 group">
             <div class="flex items-center gap-3 sm:gap-4 mb-4">
                 <div class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-primary bg-opacity-10 rounded-lg group-hover:bg-primary group-hover:bg-opacity-100 transition-colors flex-shrink-0">
@@ -31,6 +54,7 @@
                 </svg>
             </div>
         </a>
+        @endif
 
         <a href="{{ route('admin.news.index') }}" class="block bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-4 sm:p-6 group">
             <div class="flex items-center gap-3 sm:gap-4 mb-4">
