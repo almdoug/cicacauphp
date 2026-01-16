@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ProductionCost;
 use App\Exports\ProductionCostDataExport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ProductionCostController extends Controller
@@ -63,13 +64,26 @@ class ProductionCostController extends Controller
     /**
      * Exportar dados para Excel
      */
-    public function export($slug)
+    public function export($slug, $type = 'pdf')
     {
         $cost = ProductionCost::where('slug', $slug)->firstOrFail();
-        $cost->load('dataSeries');
         
-        $filename = 'custo_producao_' . str_replace(' ', '_', strtolower($cost->title)) . '_' . now()->format('Y-m-d') . '.xlsx';
+        // Determinar qual arquivo baixar
+        if ($type === 'spreadsheet' && $cost->file_spreadsheet_path) {
+            if (Storage::disk('public')->exists($cost->file_spreadsheet_path)) {
+                $filePath = Storage::disk('public')->path($cost->file_spreadsheet_path);
+                $fileName = $cost->file_spreadsheet_name ?? basename($cost->file_spreadsheet_path);
+                return response()->download($filePath, $fileName);
+            }
+        } elseif ($cost->file_pdf_path) {
+            if (Storage::disk('public')->exists($cost->file_pdf_path)) {
+                $filePath = Storage::disk('public')->path($cost->file_pdf_path);
+                $fileName = $cost->file_pdf_name ?? basename($cost->file_pdf_path);
+                return response()->download($filePath, $fileName);
+            }
+        }
         
-        return Excel::download(new ProductionCostDataExport($cost), $filename);
+        // Se não houver arquivo, retornar erro 404
+        abort(404, 'Arquivo não encontrado.');
     }
 }

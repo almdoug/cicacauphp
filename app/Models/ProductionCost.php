@@ -18,6 +18,10 @@ class ProductionCost extends Model
         'comment',
         'updated_at_data',
         'published_at',
+        'file_pdf_path',
+        'file_pdf_name',
+        'file_spreadsheet_path',
+        'file_spreadsheet_name',
     ];
 
     protected $casts = [

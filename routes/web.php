@@ -56,7 +56,7 @@ Route::get('/editais/{slug}', [PublicNoticeController::class, 'show'])->name('ed
 // Production Costs Routes (Custos de Produção)
 Route::get('/custos', [ProductionCostController::class, 'index'])->name('custos.index');
 Route::get('/custos/{slug}', [ProductionCostController::class, 'show'])->name('custos.show');
-Route::get('/custos/{slug}/export', [ProductionCostController::class, 'export'])->name('custos.export');
+Route::get('/custos/{slug}/export/{type?}', [ProductionCostController::class, 'export'])->name('custos.export');
 
 // Market Data Routes (Mercado Nacional e Internacional)
 Route::get('/mercado', [MarketDataController::class, 'index'])->name('mercado.index');
@@ -117,7 +117,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     // Production Costs Management (Custos de Produção)
     Route::resource('production-costs', AdminProductionCostController::class);
     Route::patch('/production-costs/{production_cost}/toggle-publish', [AdminProductionCostController::class, 'togglePublish'])->name('production-costs.toggle-publish');
-    Route::get('/production-costs/{production_cost}/export', [AdminProductionCostController::class, 'export'])->name('production-costs.export');
+    Route::get('/production-costs/{production_cost}/export/{type?}', [AdminProductionCostController::class, 'export'])->name('production-costs.export');
     
     // Market Data Management (Mercado Nacional e Internacional)
     Route::resource('market-data', AdminMarketDataController::class);

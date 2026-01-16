@@ -10,7 +10,7 @@
             <p class="text-sm text-gray-600 mt-1">Atualize os dados do custo de produção</p>
         </div>
 
-        <form action="{{ route('admin.production-costs.update', $productionCost) }}" method="POST" class="p-4 sm:p-6 space-y-6">
+        <form action="{{ route('admin.production-costs.update', $productionCost) }}" method="POST" enctype="multipart/form-data" class="p-4 sm:p-6 space-y-6">
             @csrf
             @method('PUT')
 
@@ -138,34 +138,126 @@
                 @enderror
             </div>
 
-            <!-- Séries de Dados para Gráfico/Tabela -->
-            @include('admin.partials.data-series-form', ['dataItems' => $productionCost->dataSeries])
-
-            <!-- Botão Exportar Excel -->
-            @if($productionCost->dataSeries->count() > 0)
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        <div>
-                            <h5 class="text-sm font-semibold text-gray-900">Exportar Dados</h5>
-                            <p class="text-sm text-gray-600">{{ $productionCost->dataSeries->count() }} pontos de dados disponíveis</p>
+            <!-- Arquivo Atual -->
+            @if($productionCost->file_pdf_path || $productionCost->file_spreadsheet_path)
+            <div class="space-y-4">
+                @if($productionCost->file_pdf_path)
+                <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                            </svg>
+                            <div>
+                                <h5 class="text-sm font-semibold text-gray-900">PDF Anexado</h5>
+                                <p class="text-sm text-gray-600">{{ $productionCost->file_pdf_name ?? 'arquivo.pdf' }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <a 
+                                href="{{ route('admin.production-costs.export', ['production_cost' => $productionCost, 'type' => 'pdf']) }}" 
+                                class="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors"
+                                target="_blank"
+                            >
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                Baixar
+                            </a>
+                            <label class="inline-flex items-center gap-2 px-4 py-2 bg-red-100 text-red-700 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors cursor-pointer">
+                                <input type="checkbox" name="remove_pdf" value="1" class="rounded">
+                                Remover
+                            </label>
                         </div>
                     </div>
-                    <a 
-                        href="{{ route('admin.production-costs.export', $productionCost) }}" 
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
-                    >
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        Planilha
-                    </a>
                 </div>
+                @endif
+
+                @if($productionCost->file_spreadsheet_path)
+                <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <div>
+                                <h5 class="text-sm font-semibold text-gray-900">Planilha Anexada</h5>
+                                <p class="text-sm text-gray-600">{{ $productionCost->file_spreadsheet_name ?? 'planilha' }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <a 
+                                href="{{ route('admin.production-costs.export', ['production_cost' => $productionCost, 'type' => 'spreadsheet']) }}" 
+                                class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+                                target="_blank"
+                            >
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                Baixar
+                            </a>
+                            <label class="inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200 transition-colors cursor-pointer">
+                                <input type="checkbox" name="remove_spreadsheet" value="1" class="rounded">
+                                Remover
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                @endif
             </div>
             @endif
+
+            <!-- Upload de Novo PDF -->
+            <div>
+                <label for="file_pdf" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ $productionCost->file_pdf_path ? 'Substituir PDF' : 'Arquivo PDF' }}
+                </label>
+                <div class="flex items-center gap-4">
+                    <input 
+                        type="file" 
+                        name="file_pdf" 
+                        id="file_pdf" 
+                        accept=".pdf"
+                        class="block w-full text-sm text-gray-500
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-lg file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-red-600 file:text-white
+                            hover:file:bg-red-700
+                            @error('file_pdf') border-red-500 @enderror"
+                    >
+                </div>
+                <p class="mt-1 text-sm text-gray-500">Formato aceito: PDF (máximo 10MB)</p>
+                @error('file_pdf')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Upload de Nova Planilha -->
+            <div>
+                <label for="file_spreadsheet" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ $productionCost->file_spreadsheet_path ? 'Substituir Planilha' : 'Planilha (Excel/CSV)' }}
+                </label>
+                <div class="flex items-center gap-4">
+                    <input 
+                        type="file" 
+                        name="file_spreadsheet" 
+                        id="file_spreadsheet" 
+                        accept=".xlsx,.xls,.csv"
+                        class="block w-full text-sm text-gray-500
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-lg file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-green-600 file:text-white
+                            hover:file:bg-green-700
+                            @error('file_spreadsheet') border-red-500 @enderror"
+                    >
+                </div>
+                <p class="mt-1 text-sm text-gray-500">Formatos aceitos: XLSX, XLS, CSV (máximo 10MB)</p>
+                @error('file_spreadsheet')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
 
             <!-- Ações -->
             <div class="flex flex-col sm:flex-row gap-3 pt-6 border-t border-gray-200">

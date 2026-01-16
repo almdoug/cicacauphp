@@ -137,8 +137,57 @@
                 @enderror
             </div>
 
-            <!-- Séries de Dados para Gráfico/Tabela -->
-            @include('admin.partials.data-series-form', ['dataItems' => collect()])
+            <!-- Upload de Arquivo -->
+            <div>
+                <label for="file_pdf" class="block text-sm font-medium text-gray-700 mb-2">
+                    Arquivo PDF
+                </label>
+                <div class="flex items-center gap-4">
+                    <input 
+                        type="file" 
+                        name="file_pdf" 
+                        id="file_pdf" 
+                        accept=".pdf"
+                        class="block w-full text-sm text-gray-500
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-lg file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-red-600 file:text-white
+                            hover:file:bg-red-700
+                            @error('file_pdf') border-red-500 @enderror"
+                    >
+                </div>
+                <p class="mt-1 text-sm text-gray-500">Formato aceito: PDF (máximo 10MB)</p>
+                @error('file_pdf')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Upload de Planilha -->
+            <div>
+                <label for="file_spreadsheet" class="block text-sm font-medium text-gray-700 mb-2">
+                    Planilha (Excel/CSV)
+                </label>
+                <div class="flex items-center gap-4">
+                    <input 
+                        type="file" 
+                        name="file_spreadsheet" 
+                        id="file_spreadsheet" 
+                        accept=".xlsx,.xls,.csv"
+                        class="block w-full text-sm text-gray-500
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-lg file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-green-600 file:text-white
+                            hover:file:bg-green-700
+                            @error('file_spreadsheet') border-red-500 @enderror"
+                    >
+                </div>
+                <p class="mt-1 text-sm text-gray-500">Formatos aceitos: XLSX, XLS, CSV (máximo 10MB)</p>
+                @error('file_spreadsheet')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
 
             <!-- Ações -->
             <div class="flex flex-col sm:flex-row gap-3 pt-6 border-t border-gray-200">

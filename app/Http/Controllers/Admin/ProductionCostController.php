@@ -44,29 +44,31 @@ class ProductionCostController extends Controller
             'unit' => 'nullable|string|max:50',
             'comment' => 'nullable|string',
             'updated_at_data' => 'nullable|date',
-            'data_series' => 'nullable|array',
-            'data_series.*.date' => 'required_with:data_series|date',
-            'data_series.*.value' => 'required_with:data_series|numeric',
-            'data_series.*.label' => 'nullable|string|max:100',
-            'data_series.*.note' => 'nullable|string|max:255',
+            'file_pdf' => 'nullable|file|mimes:pdf|max:10240',
+            'file_spreadsheet' => 'nullable|file|mimes:xlsx,xls,csv|max:10240',
         ]);
 
+        // Upload do PDF se fornecido
+        if ($request->hasFile('file_pdf')) {
+            $file = $request->file('file_pdf');
+            $fileName = time() . '_pdf_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('production-costs', $fileName, 'public');
+            
+            $validated['file_pdf_path'] = $filePath;
+            $validated['file_pdf_name'] = $file->getClientOriginalName();
+        }
+
+        // Upload da planilha se fornecido
+        if ($request->hasFile('file_spreadsheet')) {
+            $file = $request->file('file_spreadsheet');
+            $fileName = time() . '_spreadsheet_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('production-costs', $fileName, 'public');
+            
+            $validated['file_spreadsheet_path'] = $filePath;
+            $validated['file_spreadsheet_name'] = $file->getClientOriginalName();
+        }
 
         $productionCost = ProductionCost::create($validated);
-
-        // Criar séries de dados se fornecidas
-        if ($request->has('data_series') && is_array($request->data_series)) {
-            foreach ($request->data_series as $seriesData) {
-                if (!empty($seriesData['date']) && !empty($seriesData['value'])) {
-                    $productionCost->dataSeries()->create([
-                        'date' => $seriesData['date'],
-                        'value' => $seriesData['value'],
-                        'label' => $seriesData['label'] ?? null,
-                        'note' => $seriesData['note'] ?? null,
-                    ]);
-                }
-            }
-        }
 
         return redirect()
             ->route('admin.production-costs.index')
@@ -95,53 +97,61 @@ class ProductionCostController extends Controller
             'unit' => 'nullable|string|max:50',
             'comment' => 'nullable|string',
             'updated_at_data' => 'nullable|date',
-            'data_series' => 'nullable|array',
-            'data_series.*.id' => 'nullable|exists:data_series,id',
-            'data_series.*.date' => 'required_with:data_series|date',
-            'data_series.*.value' => 'required_with:data_series|numeric',
-            'data_series.*.label' => 'nullable|string|max:100',
-            'data_series.*.note' => 'nullable|string|max:255',
+            'file_pdf' => 'nullable|file|mimes:pdf|max:10240',
+            'file_spreadsheet' => 'nullable|file|mimes:xlsx,xls,csv|max:10240',
+            'remove_pdf' => 'nullable|boolean',
+            'remove_spreadsheet' => 'nullable|boolean',
         ]);
 
-        $productionCost->update($validated);
+        // Remover PDF existente se solicitado
+        if ($request->has('remove_pdf') && $request->remove_pdf) {
+            if ($productionCost->file_pdf_path) {
+                Storage::disk('public')->delete($productionCost->file_pdf_path);
+                $validated['file_pdf_path'] = null;
+                $validated['file_pdf_name'] = null;
+            }
+        }
 
-        // Atualizar séries de dados
-        if ($request->has('data_series')) {
-            $existingIds = [];
-            
-            foreach ($request->data_series as $seriesData) {
-                if (!empty($seriesData['date']) && !empty($seriesData['value'])) {
-                    if (isset($seriesData['id']) && $seriesData['id']) {
-                        // Atualizar existente
-                        $series = DataSeries::find($seriesData['id']);
-                        if ($series && $series->dataable_id === $productionCost->id) {
-                            $series->update([
-                                'date' => $seriesData['date'],
-                                'value' => $seriesData['value'],
-                                'label' => $seriesData['label'] ?? null,
-                                'note' => $seriesData['note'] ?? null,
-                            ]);
-                            $existingIds[] = $series->id;
-                        }
-                    } else {
-                        // Criar novo
-                        $newSeries = $productionCost->dataSeries()->create([
-                            'date' => $seriesData['date'],
-                            'value' => $seriesData['value'],
-                            'label' => $seriesData['label'] ?? null,
-                            'note' => $seriesData['note'] ?? null,
-                        ]);
-                        $existingIds[] = $newSeries->id;
-                    }
-                }
+        // Remover planilha existente se solicitado
+        if ($request->has('remove_spreadsheet') && $request->remove_spreadsheet) {
+            if ($productionCost->file_spreadsheet_path) {
+                Storage::disk('public')->delete($productionCost->file_spreadsheet_path);
+                $validated['file_spreadsheet_path'] = null;
+                $validated['file_spreadsheet_name'] = null;
+            }
+        }
+
+        // Upload de novo PDF se fornecido
+        if ($request->hasFile('file_pdf')) {
+            // Remover PDF antigo
+            if ($productionCost->file_pdf_path) {
+                Storage::disk('public')->delete($productionCost->file_pdf_path);
             }
             
-            // Remover séries órfãs
-            $productionCost->dataSeries()->whereNotIn('id', $existingIds)->delete();
-        } else {
-            // Se não há data_series no request, remover todas
-            $productionCost->dataSeries()->delete();
+            $file = $request->file('file_pdf');
+            $fileName = time() . '_pdf_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('production-costs', $fileName, 'public');
+            
+            $validated['file_pdf_path'] = $filePath;
+            $validated['file_pdf_name'] = $file->getClientOriginalName();
         }
+
+        // Upload de nova planilha se fornecido
+        if ($request->hasFile('file_spreadsheet')) {
+            // Remover planilha antiga
+            if ($productionCost->file_spreadsheet_path) {
+                Storage::disk('public')->delete($productionCost->file_spreadsheet_path);
+            }
+            
+            $file = $request->file('file_spreadsheet');
+            $fileName = time() . '_spreadsheet_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('production-costs', $fileName, 'public');
+            
+            $validated['file_spreadsheet_path'] = $filePath;
+            $validated['file_spreadsheet_name'] = $file->getClientOriginalName();
+        }
+
+        $productionCost->update($validated);
 
         return redirect()
             ->route('admin.production-costs.index')
@@ -153,6 +163,14 @@ class ProductionCostController extends Controller
      */
     public function destroy(ProductionCost $productionCost)
     {
+        // Remover arquivos associados se existirem
+        if ($productionCost->file_pdf_path) {
+            Storage::disk('public')->delete($productionCost->file_pdf_path);
+        }
+        if ($productionCost->file_spreadsheet_path) {
+            Storage::disk('public')->delete($productionCost->file_spreadsheet_path);
+        }
+        
         $productionCost->delete();
 
         return redirect()
@@ -163,13 +181,27 @@ class ProductionCostController extends Controller
     /**
      * Exportar dados para Excel
      */
-    public function export(ProductionCost $productionCost)
+    public function export(ProductionCost $productionCost, $type = 'pdf')
     {
-        $productionCost->load('dataSeries');
+        // Determinar qual arquivo baixar
+        if ($type === 'spreadsheet' && $productionCost->file_spreadsheet_path) {
+            if (Storage::disk('public')->exists($productionCost->file_spreadsheet_path)) {
+                $filePath = Storage::disk('public')->path($productionCost->file_spreadsheet_path);
+                $fileName = $productionCost->file_spreadsheet_name ?? basename($productionCost->file_spreadsheet_path);
+                return response()->download($filePath, $fileName);
+            }
+        } elseif ($productionCost->file_pdf_path) {
+            if (Storage::disk('public')->exists($productionCost->file_pdf_path)) {
+                $filePath = Storage::disk('public')->path($productionCost->file_pdf_path);
+                $fileName = $productionCost->file_pdf_name ?? basename($productionCost->file_pdf_path);
+                return response()->download($filePath, $fileName);
+            }
+        }
         
-        $filename = 'custo_producao_' . str_replace(' ', '_', strtolower($productionCost->title)) . '_' . now()->format('Y-m-d') . '.xlsx';
-        
-        return Excel::download(new ProductionCostDataExport($productionCost), $filename);
+        // Caso contrário, retornar erro ou redirecionar
+        return redirect()
+            ->route('admin.production-costs.edit', $productionCost)
+            ->with('error', 'Nenhum arquivo disponível para download.');
     }
 
     /**

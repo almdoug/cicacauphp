@@ -13,9 +13,9 @@
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center">
              <div class="flex items-center justify-center gap-3 mb-4 flex-wrap">
-                @if($data->country)
+                @if($data->location)
                     <span class="inline-block px-4 py-1 bg-white/20 rounded-full text-sm font-semibold">
-                        {{ $data->country }}
+                        {{ $data->location }}
                     </span>
                 @endif
                 @if($data->frequency)
@@ -66,12 +66,21 @@
                             </div>
                             <div>
                                 <p class="text-xs text-gray-500 uppercase tracking-wider">Fonte</p>
-                                <p class="text-sm font-medium text-gray-900">{{ $data->source }}</p>
+                                @if($data->source_link)
+                                    <a href="{{ $data->source_link }}" target="_blank" rel="noopener noreferrer" class="text-sm font-medium text-primary hover:text-secondary transition-colors inline-flex items-center gap-1">
+                                        {{ $data->source }}
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                        </svg>
+                                    </a>
+                                @else
+                                    <p class="text-sm font-medium text-gray-900">{{ $data->source }}</p>
+                                @endif
                             </div>
                         </div>
                     @endif
                     
-                    @if($data->country)
+                    @if($data->location)
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
                                 <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -79,8 +88,8 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-xs text-gray-500 uppercase tracking-wider">País</p>
-                                <p class="text-sm font-medium text-gray-900">{{ $data->country }}</p>
+                                <p class="text-xs text-gray-500 uppercase tracking-wider">Local</p>
+                                <p class="text-sm font-medium text-gray-900">{{ $data->location }}</p>
                             </div>
                         </div>
                     @endif
@@ -293,9 +302,9 @@
                     @foreach($related as $item)
                         <a href="{{ route('mercado.show', $item->slug) }}" class="block group">
                             <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow">
-                                @if($item->country)
+                                @if($item->location)
                                     <span class="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-primary/10 text-primary mb-3">
-                                        {{ $item->country }}
+                                        {{ $item->location }}
                                     </span>
                                 @endif
                                 <h4 class="font-semibold text-gray-900 group-hover:text-primary transition-colors line-clamp-2 mb-2">

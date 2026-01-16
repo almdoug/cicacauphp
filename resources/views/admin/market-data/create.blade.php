@@ -50,19 +50,19 @@
                     @enderror
                 </div>
 
-                <!-- País -->
+                <!-- Local -->
                 <div>
-                    <label for="country" class="block text-sm font-medium text-gray-700 mb-2">
-                        País
+                    <label for="location" class="block text-sm font-medium text-gray-700 mb-2">
+                        Local
                     </label>
                     <input 
                         type="text" 
-                        name="country" 
-                        id="country" 
-                        value="{{ old('country', 'Brasil') }}"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent @error('country') border-red-500 @enderror"
+                        name="location" 
+                        id="location" 
+                        value="{{ old('location', 'Brasil') }}"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent @error('location') border-red-500 @enderror"
                     >
-                    @error('country')
+                    @error('location')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
@@ -81,6 +81,24 @@
                         placeholder="Ex: ICCO, NASDAQ, SECEX"
                     >
                     @error('source')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Link da Fonte -->
+                <div>
+                    <label for="source_link" class="block text-sm font-medium text-gray-700 mb-2">
+                        Link da Fonte (opcional)
+                    </label>
+                    <input 
+                        type="url" 
+                        name="source_link" 
+                        id="source_link" 
+                        value="{{ old('source_link') }}"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent @error('source_link') border-red-500 @enderror"
+                        placeholder="https://exemplo.com"
+                    >
+                    @error('source_link')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>

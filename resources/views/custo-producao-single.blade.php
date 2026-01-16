@@ -4,7 +4,6 @@
 @section('meta_description', Str::limit($cost->comment ?? $cost->title, 160))
 
 @push('head-scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 @endpush
 
 @section('content')
@@ -79,7 +78,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-xs text-gray-500 uppercase tracking-wider">País</p>
+                                <p class="text-xs text-gray-500 uppercase tracking-wider">Local</p>
                                 <p class="text-sm font-medium text-gray-900">{{ $cost->country }}</p>
                             </div>
                         </div>
@@ -102,7 +101,6 @@
             </div>
 
             <!-- Comentário -->
-            <!-- Comentário -->
             <div class="p-6 md:p-8">
                 @if($cost->comment)
                     <h2 class="text-xl font-bold text-gray-900 mb-4">Observações</h2>
@@ -111,176 +109,64 @@
                     </div>
                 @endif
 
-                <!-- Dados de Séries -->
-                @if($cost->dataSeries && $cost->dataSeries->count() > 0)
-                    <div class="flex items-center justify-between mb-4 mt-8">
-                        <h2 class="text-xl font-bold text-gray-900">Dados Históricos</h2>
-                    </div>
-                    
-                    <!-- Toggle entre Tabela e Gráfico -->
-                    <div x-data="{
-                        view: 'table',
-                        chartInstance: null,
-                        chartData: @js($cost->dataSeries->map(function($series) {
-                            return [
-                                'date' => \Carbon\Carbon::parse($series->date)->format('d/m/Y'),
-                                'value' => $series->value,
-                                'label' => $series->label
-                            ];
-                        })->values()),
-                        chartLabel: @js($cost->title . ($cost->unit ? ' (' . $cost->unit . ')' : '')),
-                        initChart() {
-                            if (this.chartInstance) return;
-                            
-                            const ctx = document.getElementById('dataChart');
-                            if (!ctx) return;
-                            
-                            this.chartInstance = new Chart(ctx, {
-                                type: 'line',
-                                data: {
-                                    labels: this.chartData.map(item => item.date),
-                                    datasets: [{
-                                        label: this.chartLabel,
-                                        data: this.chartData.map(item => item.value),
-                                        borderColor: '#D97706',
-                                        backgroundColor: 'rgba(217, 119, 6, 0.1)',
-                                        borderWidth: 2,
-                                        tension: 0.4,
-                                        fill: true,
-                                        pointRadius: 4,
-                                        pointHoverRadius: 6,
-                                        pointBackgroundColor: '#D97706',
-                                        pointBorderColor: '#fff',
-                                        pointBorderWidth: 2
-                                    }]
-                                },
-                                options: {
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                    plugins: {
-                                        legend: {
-                                            display: true,
-                                            position: 'top',
-                                            labels: {
-                                                padding: window.innerWidth < 640 ? 8 : 12,
-                                                font: {
-                                                    size: window.innerWidth < 640 ? 11 : 12
-                                                }
-                                            }
-                                        },
-                                        tooltip: {
-                                            mode: 'index',
-                                            intersect: false,
-                                            callbacks: {
-                                                title: function(context) {
-                                                    return context[0].label;
-                                                },
-                                                label: function(context) {
-                                                    return new Intl.NumberFormat('pt-BR', {
-                                                        minimumFractionDigits: 2,
-                                                        maximumFractionDigits: 2
-                                                    }).format(context.parsed.y);
-                                                }
-                                            }
-                                        }
-                                    },
-                                    scales: {
-                                        y: {
-                                            beginAtZero: false,
-                                            ticks: {
-                                                font: {
-                                                    size: window.innerWidth < 640 ? 10 : 12
-                                                },
-                                                maxTicksLimit: window.innerWidth < 640 ? 6 : 8,
-                                                callback: function(value) {
-                                                    return new Intl.NumberFormat('pt-BR', {
-                                                        minimumFractionDigits: 2,
-                                                        maximumFractionDigits: 2
-                                                    }).format(value);
-                                                }
-                                            }
-                                        },
-                                        x: {
-                                            ticks: {
-                                                font: {
-                                                    size: window.innerWidth < 640 ? 9 : 11
-                                                },
-                                                maxRotation: window.innerWidth < 640 ? 45 : 45,
-                                                minRotation: window.innerWidth < 640 ? 45 : 0,
-                                                autoSkip: true,
-                                                maxTicksLimit: window.innerWidth < 640 ? 8 : 15
-                                            }
-                                        }
-                                    }
-                                }
-                            });
-                        }
-                    }" x-init="$watch('view', value => { if (value === 'chart') { $nextTick(() => initChart()) } })">
-                        <div class="flex gap-2 mb-4">
-                            <button 
-                                @click="view = 'table'" 
-                                :class="view === 'table' ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'"
-                                class="px-4 py-2 rounded-lg font-medium transition-colors"
-                            >
-                                <span class="flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                <!-- Arquivo para Download -->
+                @if($cost->file_pdf_path || $cost->file_spreadsheet_path)
+                    <div class="mt-8 space-y-4">
+                        @if($cost->file_pdf_path)
+                        <div class="bg-red-50 border-2 border-red-200 rounded-xl p-6">
+                            <div class="flex flex-col sm:flex-row items-center gap-4">
+                                <div class="flex items-center gap-4 flex-1">
+                                    <div class="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center">
+                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-900">PDF Disponível</h3>
+                                        <p class="text-sm text-gray-600">{{ $cost->file_pdf_name ?? 'Documento PDF' }}</p>
+                                    </div>
+                                </div>
+                                <a 
+                                    href="{{ route('custos.export', ['slug' => $cost->slug, 'type' => 'pdf']) }}" 
+                                    class="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors shadow-md hover:shadow-lg"
+                                    target="_blank"
+                                >
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                     </svg>
-                                    Tabela
-                                </span>
-                            </button>
-                            <button 
-                                @click="view = 'chart'" 
-                                :class="view === 'chart' ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'"
-                                class="px-4 py-2 rounded-lg font-medium transition-colors"
-                            >
-                                <span class="flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                                    </svg>
-                                    Gráfico
-                                </span>
-                            </button>
-
-                            <a href="{{ route('custos.export', $cost->slug) }}" 
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors sm:ml-auto">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                                Planilha
-                            </a>
-                        </div>
-
-                        <!-- Visualização em Tabela -->
-                        <div x-show="view === 'table'" class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach($cost->dataSeries as $series)
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ \Carbon\Carbon::parse($series->date)->format('d/m/Y') }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                {{ number_format($series->value, 2, ',', '.') }}
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Visualização em Gráfico -->
-                        <div x-show="view === 'chart'" class="bg-white p-2 sm:p-4 rounded-lg border border-gray-200">
-                            <div class="h-[400px] sm:h-[450px] md:h-[400px]">
-                                <canvas id="dataChart"></canvas>
+                                    Baixar PDF
+                                </a>
                             </div>
                         </div>
+                        @endif
+
+                        @if($cost->file_spreadsheet_path)
+                        <div class="bg-green-50 border-2 border-green-200 rounded-xl p-6">
+                            <div class="flex flex-col sm:flex-row items-center gap-4">
+                                <div class="flex items-center gap-4 flex-1">
+                                    <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center">
+                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-900">Planilha Disponível</h3>
+                                        <p class="text-sm text-gray-600">{{ $cost->file_spreadsheet_name ?? 'Planilha Excel' }}</p>
+                                    </div>
+                                </div>
+                                <a 
+                                    href="{{ route('custos.export', ['slug' => $cost->slug, 'type' => 'spreadsheet']) }}" 
+                                    class="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700 transition-colors shadow-md hover:shadow-lg"
+                                    target="_blank"
+                                >
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    Baixar Planilha
+                                </a>
+                            </div>
+                        </div>
+                        @endif
                     </div>
                 @endif
             </div>
@@ -294,9 +180,9 @@
                     @foreach($related as $item)
                         <a href="{{ route('custos.show', $item->slug) }}" class="block group">
                             <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow">
-                                @if($item->country)
+                                @if($item->location)
                                     <span class="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-primary/10 text-primary mb-3">
-                                        {{ $item->country }}
+                                        {{ $item->location }}
                                     </span>
                                 @endif
                                 <h4 class="font-semibold text-gray-900 group-hover:text-primary transition-colors line-clamp-2 mb-2">
