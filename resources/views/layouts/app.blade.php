@@ -26,6 +26,8 @@
 
     @include('components.footer')
     
+    @include('components.cookie-consent')
+    
     @stack('scripts')
 </body>
 </html>
