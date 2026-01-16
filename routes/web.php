@@ -27,6 +27,9 @@ use Illuminate\Support\Facades\Route;
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/sobre', [HomeController::class, 'sobre'])->name('sobre');
+Route::get('/cookies', [HomeController::class, 'cookies'])->name('cookies');
+Route::get('/politica-privacidade', [HomeController::class, 'privacidade'])->name('privacidade');
+Route::get('/termos-uso', [HomeController::class, 'termos'])->name('termos');
 
 // News Routes
 Route::get('/noticias', [NewsController::class, 'index'])->name('noticias.index');

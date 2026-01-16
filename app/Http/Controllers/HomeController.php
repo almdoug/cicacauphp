@@ -31,4 +31,28 @@ class HomeController extends Controller
         $contents = PageContent::getPageContents('sobre');
         return view('sobre', compact('contents'));
     }
+
+    /**
+     * Exibir a página de política de cookies
+     */
+    public function cookies()
+    {
+        return view('cookies');
+    }
+
+    /**
+     * Exibir a página de política de privacidade
+     */
+    public function privacidade()
+    {
+        return view('privacidade');
+    }
+
+    /**
+     * Exibir a página de termos de uso
+     */
+    public function termos()
+    {
+        return view('termos');
+    }
 }
