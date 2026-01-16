@@ -155,11 +155,17 @@
                                 },
                                 options: {
                                     responsive: true,
-                                    maintainAspectRatio: true,
+                                    maintainAspectRatio: false,
                                     plugins: {
                                         legend: {
                                             display: true,
-                                            position: 'top'
+                                            position: 'top',
+                                            labels: {
+                                                padding: window.innerWidth < 640 ? 8 : 12,
+                                                font: {
+                                                    size: window.innerWidth < 640 ? 11 : 12
+                                                }
+                                            }
                                         },
                                         tooltip: {
                                             mode: 'index',
@@ -181,6 +187,10 @@
                                         y: {
                                             beginAtZero: false,
                                             ticks: {
+                                                font: {
+                                                    size: window.innerWidth < 640 ? 10 : 12
+                                                },
+                                                maxTicksLimit: window.innerWidth < 640 ? 6 : 8,
                                                 callback: function(value) {
                                                     return new Intl.NumberFormat('pt-BR', {
                                                         minimumFractionDigits: 2,
@@ -191,8 +201,13 @@
                                         },
                                         x: {
                                             ticks: {
-                                                maxRotation: 45,
-                                                minRotation: 0
+                                                font: {
+                                                    size: window.innerWidth < 640 ? 9 : 11
+                                                },
+                                                maxRotation: window.innerWidth < 640 ? 45 : 45,
+                                                minRotation: window.innerWidth < 640 ? 45 : 0,
+                                                autoSkip: true,
+                                                maxTicksLimit: window.innerWidth < 640 ? 8 : 15
                                             }
                                         }
                                     }
@@ -260,8 +275,10 @@
                         </div>
 
                         <!-- Visualização em Gráfico -->
-                        <div x-show="view === 'chart'" class="bg-white p-4 rounded-lg border border-gray-200">
-                            <canvas id="dataChart" height="100"></canvas>
+                        <div x-show="view === 'chart'" class="bg-white p-2 sm:p-4 rounded-lg border border-gray-200">
+                            <div class="h-[400px] sm:h-[450px] md:h-[400px]">
+                                <canvas id="dataChart"></canvas>
+                            </div>
                         </div>
                     </div>
                 @endif
