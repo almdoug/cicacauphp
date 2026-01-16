@@ -22,7 +22,13 @@ use App\Http\Controllers\MarketDataController;
 use App\Http\Controllers\CourseEventController;
 use App\Http\Controllers\InterviewController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
+
+// API Routes com Rate Limiting
+Route::get('/api/search', [SearchController::class, 'search'])
+    ->middleware('throttle:60,1')
+    ->name('api.search');
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');

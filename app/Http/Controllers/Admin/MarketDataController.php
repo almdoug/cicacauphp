@@ -170,4 +170,22 @@ class MarketDataController extends Controller
         
         return Excel::download(new MarketDataDataExport($marketDatum), $filename);
     }
+
+    /**
+     * Publicar/Despublicar dado de mercado
+     */
+    public function togglePublish(MarketData $marketDatum)
+    {
+        if ($marketDatum->published_at) {
+            $marketDatum->update(['published_at' => null]);
+            $message = 'Dado de mercado despublicado com sucesso!';
+        } else {
+            $marketDatum->update(['published_at' => now()]);
+            $message = 'Dado de mercado publicado com sucesso!';
+        }
+
+        return redirect()
+            ->route('admin.market-data.index')
+            ->with('success', $message);
+    }
 }

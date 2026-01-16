@@ -19,10 +19,12 @@ class MarketData extends Model
         'unit',
         'comment',
         'updated_at_data',
+        'published_at',
     ];
 
     protected $casts = [
         'updated_at_data' => 'datetime',
+        'published_at' => 'datetime',
     ];
 
     /**

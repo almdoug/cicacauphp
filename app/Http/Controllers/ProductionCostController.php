@@ -14,7 +14,9 @@ class ProductionCostController extends Controller
      */
     public function index(Request $request)
     {
-        $query = ProductionCost::orderBy('created_at', 'desc');
+        $query = ProductionCost::whereNotNull('published_at')
+                               ->where('published_at', '<=', now())
+                               ->orderBy('created_at', 'desc');
 
         // Filtro por país
         if ($request->filled('country')) {
@@ -41,10 +43,15 @@ class ProductionCostController extends Controller
      */
     public function show($slug)
     {
-        $cost = ProductionCost::where('slug', $slug)->firstOrFail();
+        $cost = ProductionCost::whereNotNull('published_at')
+                              ->where('published_at', '<=', now())
+                              ->where('slug', $slug)
+                              ->firstOrFail();
 
         // Itens relacionados (mesmo país)
-        $related = ProductionCost::where('id', '!=', $cost->id)
+        $related = ProductionCost::whereNotNull('published_at')
+                                 ->where('published_at', '<=', now())
+                                 ->where('id', '!=', $cost->id)
                                  ->where('country', $cost->country)
                                  ->orderBy('created_at', 'desc')
                                  ->limit(3)

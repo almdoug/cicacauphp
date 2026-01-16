@@ -26,6 +26,8 @@
 
     @include('components.footer')
     
+    @include('components.search-modal')
+    
     @include('components.cookie-consent')
     
     @stack('scripts')

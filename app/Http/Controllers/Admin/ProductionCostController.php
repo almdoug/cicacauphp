@@ -171,4 +171,22 @@ class ProductionCostController extends Controller
         
         return Excel::download(new ProductionCostDataExport($productionCost), $filename);
     }
+
+    /**
+     * Publicar/Despublicar custo de produção
+     */
+    public function togglePublish(ProductionCost $productionCost)
+    {
+        if ($productionCost->published_at) {
+            $productionCost->update(['published_at' => null]);
+            $message = 'Custo de produção despublicado com sucesso!';
+        } else {
+            $productionCost->update(['published_at' => now()]);
+            $message = 'Custo de produção publicado com sucesso!';
+        }
+
+        return redirect()
+            ->route('admin.production-costs.index')
+            ->with('success', $message);
+    }
 }

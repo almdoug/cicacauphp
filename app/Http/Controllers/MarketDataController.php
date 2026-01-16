@@ -14,7 +14,8 @@ class MarketDataController extends Controller
      */
     public function index(Request $request)
     {
-        $query = MarketData::query()
+        $query = MarketData::whereNotNull('published_at')
+                           ->where('published_at', '<=', now())
                            ->orderBy('updated_at_data', 'desc');
 
         // Filtro por categoria (Desativado temporariamente devido a refatoração)
@@ -64,11 +65,14 @@ class MarketDataController extends Controller
      */
     public function show($slug)
     {
-        $data = MarketData::where('slug', $slug)
+        $data = MarketData::whereNotNull('published_at')
+                          ->where('published_at', '<=', now())
+                          ->where('slug', $slug)
                           ->firstOrFail();
 
         // Itens relacionados (mesma categoria)
-        $related = MarketData::query()
+        $related = MarketData::whereNotNull('published_at')
+                             ->where('published_at', '<=', now())
                              ->where('id', '!=', $data->id)
                              // ->where('category', $data->category)
                              ->orderBy('updated_at_data', 'desc')
