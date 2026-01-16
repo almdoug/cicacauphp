@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ProductionCost;
+use App\Models\DataSeries;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ProductionCostDataExport;
 
 class ProductionCostController extends Controller
 {
@@ -15,9 +18,7 @@ class ProductionCostController extends Controller
      */
     public function index()
     {
-        $costs = ProductionCost::with('user')
-                               ->orderBy('created_at', 'desc')
-                               ->paginate(15);
+        $costs = ProductionCost::orderBy('created_at', 'desc')->paginate(15);
         
         return view('admin.production-costs.index', compact('costs'));
     }
@@ -27,8 +28,7 @@ class ProductionCostController extends Controller
      */
     public function create()
     {
-        $types = ProductionCost::TYPES;
-        return view('admin.production-costs.create', compact('types'));
+        return view('admin.production-costs.create');
     }
 
     /**
@@ -38,32 +38,35 @@ class ProductionCostController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'summary' => 'required|string|max:1000',
-            'content' => 'nullable|string',
-            'type' => 'required|in:' . implode(',', array_keys(ProductionCost::TYPES)),
-            'region' => 'nullable|string|max:100',
-            'period' => 'nullable|string|max:50',
-            'value' => 'nullable|numeric|min:0',
-            'unit' => 'nullable|string|max:50',
+            'frequency' => 'nullable|string|max:100',
+            'country' => 'nullable|string|max:100',
             'source' => 'nullable|string|max:255',
-            'file' => 'nullable|file|mimes:pdf,xlsx,xls,csv|max:10240',
-            'external_link' => 'nullable|url|max:255',
-            'published_at' => 'nullable|date',
+            'unit' => 'nullable|string|max:50',
+            'comment' => 'nullable|string',
+            'updated_at_data' => 'nullable|date',
+            'data_series' => 'nullable|array',
+            'data_series.*.date' => 'required_with:data_series|date',
+            'data_series.*.value' => 'required_with:data_series|numeric',
+            'data_series.*.label' => 'nullable|string|max:100',
+            'data_series.*.note' => 'nullable|string|max:255',
         ]);
 
-        $validated['user_id'] = Auth::id();
 
-        // Upload de arquivo
-        if ($request->hasFile('file')) {
-            $validated['file'] = $request->file('file')->store('production-costs', 'public');
+        $productionCost = ProductionCost::create($validated);
+
+        // Criar séries de dados se fornecidas
+        if ($request->has('data_series') && is_array($request->data_series)) {
+            foreach ($request->data_series as $seriesData) {
+                if (!empty($seriesData['date']) && !empty($seriesData['value'])) {
+                    $productionCost->dataSeries()->create([
+                        'date' => $seriesData['date'],
+                        'value' => $seriesData['value'],
+                        'label' => $seriesData['label'] ?? null,
+                        'note' => $seriesData['note'] ?? null,
+                    ]);
+                }
+            }
         }
-
-        // Publicar agora
-        if ($request->has('publish_now')) {
-            $validated['published_at'] = now();
-        }
-
-        ProductionCost::create($validated);
 
         return redirect()
             ->route('admin.production-costs.index')
@@ -75,8 +78,8 @@ class ProductionCostController extends Controller
      */
     public function edit(ProductionCost $productionCost)
     {
-        $types = ProductionCost::TYPES;
-        return view('admin.production-costs.edit', compact('productionCost', 'types'));
+        $productionCost->load('dataSeries');
+        return view('admin.production-costs.edit', compact('productionCost'));
     }
 
     /**
@@ -86,34 +89,59 @@ class ProductionCostController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'summary' => 'required|string|max:1000',
-            'content' => 'nullable|string',
-            'type' => 'required|in:' . implode(',', array_keys(ProductionCost::TYPES)),
-            'region' => 'nullable|string|max:100',
-            'period' => 'nullable|string|max:50',
-            'value' => 'nullable|numeric|min:0',
-            'unit' => 'nullable|string|max:50',
+            'frequency' => 'nullable|string|max:100',
+            'country' => 'nullable|string|max:100',
             'source' => 'nullable|string|max:255',
-            'file' => 'nullable|file|mimes:pdf,xlsx,xls,csv|max:10240',
-            'external_link' => 'nullable|url|max:255',
-            'published_at' => 'nullable|date',
+            'unit' => 'nullable|string|max:50',
+            'comment' => 'nullable|string',
+            'updated_at_data' => 'nullable|date',
+            'data_series' => 'nullable|array',
+            'data_series.*.id' => 'nullable|exists:data_series,id',
+            'data_series.*.date' => 'required_with:data_series|date',
+            'data_series.*.value' => 'required_with:data_series|numeric',
+            'data_series.*.label' => 'nullable|string|max:100',
+            'data_series.*.note' => 'nullable|string|max:255',
         ]);
 
-        // Upload de arquivo
-        if ($request->hasFile('file')) {
-            // Remover arquivo anterior
-            if ($productionCost->file) {
-                Storage::disk('public')->delete($productionCost->file);
-            }
-            $validated['file'] = $request->file('file')->store('production-costs', 'public');
-        }
-
-        // Publicar agora
-        if ($request->has('publish_now') && !$productionCost->isPublished()) {
-            $validated['published_at'] = now();
-        }
-
         $productionCost->update($validated);
+
+        // Atualizar séries de dados
+        if ($request->has('data_series')) {
+            $existingIds = [];
+            
+            foreach ($request->data_series as $seriesData) {
+                if (!empty($seriesData['date']) && !empty($seriesData['value'])) {
+                    if (isset($seriesData['id']) && $seriesData['id']) {
+                        // Atualizar existente
+                        $series = DataSeries::find($seriesData['id']);
+                        if ($series && $series->dataable_id === $productionCost->id) {
+                            $series->update([
+                                'date' => $seriesData['date'],
+                                'value' => $seriesData['value'],
+                                'label' => $seriesData['label'] ?? null,
+                                'note' => $seriesData['note'] ?? null,
+                            ]);
+                            $existingIds[] = $series->id;
+                        }
+                    } else {
+                        // Criar novo
+                        $newSeries = $productionCost->dataSeries()->create([
+                            'date' => $seriesData['date'],
+                            'value' => $seriesData['value'],
+                            'label' => $seriesData['label'] ?? null,
+                            'note' => $seriesData['note'] ?? null,
+                        ]);
+                        $existingIds[] = $newSeries->id;
+                    }
+                }
+            }
+            
+            // Remover séries órfãs
+            $productionCost->dataSeries()->whereNotIn('id', $existingIds)->delete();
+        } else {
+            // Se não há data_series no request, remover todas
+            $productionCost->dataSeries()->delete();
+        }
 
         return redirect()
             ->route('admin.production-costs.index')
@@ -125,11 +153,6 @@ class ProductionCostController extends Controller
      */
     public function destroy(ProductionCost $productionCost)
     {
-        // Remover arquivo
-        if ($productionCost->file) {
-            Storage::disk('public')->delete($productionCost->file);
-        }
-
         $productionCost->delete();
 
         return redirect()
@@ -138,18 +161,14 @@ class ProductionCostController extends Controller
     }
 
     /**
-     * Toggle publicação
+     * Exportar dados para Excel
      */
-    public function togglePublish(ProductionCost $productionCost)
+    public function export(ProductionCost $productionCost)
     {
-        if ($productionCost->isPublished()) {
-            $productionCost->update(['published_at' => null]);
-            $message = 'Custo de produção despublicado com sucesso!';
-        } else {
-            $productionCost->update(['published_at' => now()]);
-            $message = 'Custo de produção publicado com sucesso!';
-        }
-
-        return redirect()->back()->with('success', $message);
+        $productionCost->load('dataSeries');
+        
+        $filename = 'custo_producao_' . str_replace(' ', '_', strtolower($productionCost->title)) . '_' . now()->format('Y-m-d') . '.xlsx';
+        
+        return Excel::download(new ProductionCostDataExport($productionCost), $filename);
     }
 }

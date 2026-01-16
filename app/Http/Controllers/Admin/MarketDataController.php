@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\MarketData;
+use App\Models\DataSeries;
+use App\Exports\MarketDataDataExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class MarketDataController extends Controller
 {
@@ -15,9 +18,7 @@ class MarketDataController extends Controller
      */
     public function index()
     {
-        $marketData = MarketData::with('user')
-                                ->orderBy('created_at', 'desc')
-                                ->paginate(15);
+        $marketData = MarketData::orderBy('created_at', 'desc')->paginate(15);
         
         return view('admin.market-data.index', compact('marketData'));
     }
@@ -27,9 +28,7 @@ class MarketDataController extends Controller
      */
     public function create()
     {
-        $categories = MarketData::CATEGORIES;
-        $scopes = MarketData::SCOPES;
-        return view('admin.market-data.create', compact('categories', 'scopes'));
+        return view('admin.market-data.create');
     }
 
     /**
@@ -39,34 +38,34 @@ class MarketDataController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'summary' => 'required|string|max:1000',
-            'content' => 'nullable|string',
-            'category' => 'required|in:' . implode(',', array_keys(MarketData::CATEGORIES)),
-            'scope' => 'required|in:' . implode(',', array_keys(MarketData::SCOPES)),
-            'region' => 'nullable|string|max:100',
-            'period' => 'nullable|string|max:50',
-            'value' => 'nullable|numeric',
-            'unit' => 'nullable|string|max:50',
-            'variation' => 'nullable|numeric',
+            'frequency' => 'nullable|string|max:100',
+            'country' => 'nullable|string|max:100',
             'source' => 'nullable|string|max:255',
-            'file' => 'nullable|file|mimes:pdf,xlsx,xls,csv,png,jpg,jpeg|max:10240',
-            'external_link' => 'nullable|url|max:255',
-            'published_at' => 'nullable|date',
+            'unit' => 'nullable|string|max:50',
+            'comment' => 'nullable|string',
+            'updated_at_data' => 'nullable|date',
+            'data_series' => 'nullable|array',
+            'data_series.*.date' => 'required_with:data_series|date',
+            'data_series.*.value' => 'required_with:data_series|numeric',
+            'data_series.*.label' => 'nullable|string|max:100',
+            'data_series.*.note' => 'nullable|string|max:255',
         ]);
 
-        $validated['user_id'] = Auth::id();
+        $marketData = MarketData::create($validated);
 
-        // Upload de arquivo
-        if ($request->hasFile('file')) {
-            $validated['file'] = $request->file('file')->store('market-data', 'public');
+        // Criar séries de dados se fornecidas
+        if ($request->has('data_series') && is_array($request->data_series)) {
+            foreach ($request->data_series as $seriesData) {
+                if (!empty($seriesData['date']) && !empty($seriesData['value'])) {
+                    $marketData->dataSeries()->create([
+                        'date' => $seriesData['date'],
+                        'value' => $seriesData['value'],
+                        'label' => $seriesData['label'] ?? null,
+                        'note' => $seriesData['note'] ?? null,
+                    ]);
+                }
+            }
         }
-
-        // Publicar agora
-        if ($request->has('publish_now')) {
-            $validated['published_at'] = now();
-        }
-
-        MarketData::create($validated);
 
         return redirect()
             ->route('admin.market-data.index')
@@ -76,50 +75,72 @@ class MarketDataController extends Controller
     /**
      * Formulário de edição
      */
-    public function edit(MarketData $marketData)
+    public function edit(MarketData $marketDatum)
     {
-        $categories = MarketData::CATEGORIES;
-        $scopes = MarketData::SCOPES;
-        return view('admin.market-data.edit', compact('marketData', 'categories', 'scopes'));
+        $marketDatum->load('dataSeries');
+        return view('admin.market-data.edit', ['marketData' => $marketDatum]);
     }
 
     /**
      * Atualizar dado de mercado
      */
-    public function update(Request $request, MarketData $marketData)
+    public function update(Request $request, MarketData $marketDatum)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'summary' => 'required|string|max:1000',
-            'content' => 'nullable|string',
-            'category' => 'required|in:' . implode(',', array_keys(MarketData::CATEGORIES)),
-            'scope' => 'required|in:' . implode(',', array_keys(MarketData::SCOPES)),
-            'region' => 'nullable|string|max:100',
-            'period' => 'nullable|string|max:50',
-            'value' => 'nullable|numeric',
-            'unit' => 'nullable|string|max:50',
-            'variation' => 'nullable|numeric',
+            'frequency' => 'nullable|string|max:100',
+            'country' => 'nullable|string|max:100',
             'source' => 'nullable|string|max:255',
-            'file' => 'nullable|file|mimes:pdf,xlsx,xls,csv,png,jpg,jpeg|max:10240',
-            'external_link' => 'nullable|url|max:255',
-            'published_at' => 'nullable|date',
+            'unit' => 'nullable|string|max:50',
+            'comment' => 'nullable|string',
+            'updated_at_data' => 'nullable|date',
+            'data_series' => 'nullable|array',
+            'data_series.*.id' => 'nullable|exists:data_series,id',
+            'data_series.*.date' => 'required_with:data_series|date',
+            'data_series.*.value' => 'required_with:data_series|numeric',
+            'data_series.*.label' => 'nullable|string|max:100',
+            'data_series.*.note' => 'nullable|string|max:255',
         ]);
 
-        // Upload de arquivo
-        if ($request->hasFile('file')) {
-            // Remover arquivo anterior
-            if ($marketData->file) {
-                Storage::disk('public')->delete($marketData->file);
+        $marketDatum->update($validated);
+
+        // Atualizar séries de dados
+        if ($request->has('data_series')) {
+            $existingIds = [];
+            
+            foreach ($request->data_series as $seriesData) {
+                if (!empty($seriesData['date']) && !empty($seriesData['value'])) {
+                    if (isset($seriesData['id']) && $seriesData['id']) {
+                        // Atualizar existente
+                        $series = DataSeries::find($seriesData['id']);
+                        if ($series && $series->dataable_id === $marketDatum->id) {
+                            $series->update([
+                                'date' => $seriesData['date'],
+                                'value' => $seriesData['value'],
+                                'label' => $seriesData['label'] ?? null,
+                                'note' => $seriesData['note'] ?? null,
+                            ]);
+                            $existingIds[] = $series->id;
+                        }
+                    } else {
+                        // Criar novo
+                        $newSeries = $marketDatum->dataSeries()->create([
+                            'date' => $seriesData['date'],
+                            'value' => $seriesData['value'],
+                            'label' => $seriesData['label'] ?? null,
+                            'note' => $seriesData['note'] ?? null,
+                        ]);
+                        $existingIds[] = $newSeries->id;
+                    }
+                }
             }
-            $validated['file'] = $request->file('file')->store('market-data', 'public');
+            
+            // Remover séries órfãs
+            $marketDatum->dataSeries()->whereNotIn('id', $existingIds)->delete();
+        } else {
+            // Se não há data_series no request, remover todas
+            $marketDatum->dataSeries()->delete();
         }
-
-        // Publicar agora
-        if ($request->has('publish_now') && !$marketData->isPublished()) {
-            $validated['published_at'] = now();
-        }
-
-        $marketData->update($validated);
 
         return redirect()
             ->route('admin.market-data.index')
@@ -129,14 +150,9 @@ class MarketDataController extends Controller
     /**
      * Deletar dado de mercado
      */
-    public function destroy(MarketData $marketData)
+    public function destroy(MarketData $marketDatum)
     {
-        // Remover arquivo
-        if ($marketData->file) {
-            Storage::disk('public')->delete($marketData->file);
-        }
-
-        $marketData->delete();
+        $marketDatum->delete();
 
         return redirect()
             ->route('admin.market-data.index')
@@ -144,18 +160,14 @@ class MarketDataController extends Controller
     }
 
     /**
-     * Toggle publicação
+     * Exportar dados para Excel
      */
-    public function togglePublish(MarketData $marketData)
+    public function export(MarketData $marketDatum)
     {
-        if ($marketData->isPublished()) {
-            $marketData->update(['published_at' => null]);
-            $message = 'Dado de mercado despublicado com sucesso!';
-        } else {
-            $marketData->update(['published_at' => now()]);
-            $message = 'Dado de mercado publicado com sucesso!';
-        }
-
-        return redirect()->back()->with('success', $message);
+        $marketDatum->load('dataSeries');
+        
+        $filename = 'mercado_' . str_replace(' ', '_', strtolower($marketDatum->title)) . '_' . now()->format('Y-m-d') . '.xlsx';
+        
+        return Excel::download(new MarketDataDataExport($marketDatum), $filename);
     }
 }

@@ -11,47 +11,18 @@ class MarketData extends Model
     protected $table = 'market_data';
 
     protected $fillable = [
-        'user_id',
         'title',
         'slug',
-        'summary',
-        'content',
-        'category',
-        'scope',
-        'region',
-        'period',
-        'value',
-        'unit',
-        'variation',
+        'frequency',
+        'country',
         'source',
-        'file',
-        'external_link',
-        'published_at',
+        'unit',
+        'comment',
+        'updated_at_data',
     ];
 
     protected $casts = [
-        'published_at' => 'datetime',
-        'value' => 'decimal:2',
-        'variation' => 'decimal:2',
-    ];
-
-    /**
-     * Categorias de dados de mercado
-     */
-    public const CATEGORIES = [
-        'producao' => 'Produção',
-        'precos' => 'Preços',
-        'exportacao' => 'Exportação',
-        'importacao' => 'Importação',
-    ];
-
-    /**
-     * Escopos de mercado
-     */
-    public const SCOPES = [
-        'nacional' => 'Nacional',
-        'internacional' => 'Internacional',
-        'ambos' => 'Nacional e Internacional',
+        'updated_at_data' => 'datetime',
     ];
 
     /**
@@ -88,176 +59,18 @@ class MarketData extends Model
     }
 
     /**
-     * Relacionamento com usuário
+     * Relacionamento com séries de dados
      */
-    public function user(): BelongsTo
+    public function dataSeries()
     {
-        return $this->belongsTo(User::class);
+        return $this->morphMany(DataSeries::class, 'dataable')->orderBy('date');
     }
 
     /**
-     * Scope para itens publicados
+     * Obter data de atualização formatada
      */
-    public function scopePublished($query)
+    public function getFormattedUpdatedAtData(): ?string
     {
-        return $query->whereNotNull('published_at')
-                     ->where('published_at', '<=', now());
-    }
-
-    /**
-     * Scope para rascunhos
-     */
-    public function scopeDraft($query)
-    {
-        return $query->whereNull('published_at');
-    }
-
-    /**
-     * Scope por categoria
-     */
-    public function scopeOfCategory($query, $category)
-    {
-        return $query->where('category', $category);
-    }
-
-    /**
-     * Scope por escopo (nacional/internacional)
-     */
-    public function scopeOfScope($query, $scope)
-    {
-        if ($scope === 'ambos') {
-            return $query;
-        }
-        return $query->whereIn('scope', [$scope, 'ambos']);
-    }
-
-    /**
-     * Verificar se está publicado
-     */
-    public function isPublished(): bool
-    {
-        return $this->published_at !== null && $this->published_at <= now();
-    }
-
-    /**
-     * Obter nome da categoria
-     */
-    public function getCategoryName(): string
-    {
-        return self::CATEGORIES[$this->category] ?? $this->category;
-    }
-
-    /**
-     * Obter nome do escopo
-     */
-    public function getScopeName(): string
-    {
-        return self::SCOPES[$this->scope] ?? $this->scope;
-    }
-
-    /**
-     * Obter cor da categoria
-     */
-    public function getCategoryColor(): string
-    {
-        return match($this->category) {
-            'producao' => 'green',
-            'precos' => 'blue',
-            'exportacao' => 'purple',
-            'importacao' => 'orange',
-            default => 'gray',
-        };
-    }
-
-    /**
-     * Obter valor formatado
-     */
-    public function getFormattedValue(): ?string
-    {
-        if (!$this->value) {
-            return null;
-        }
-        
-        // Detectar se é valor monetário pela unidade
-        $isMonetary = str_contains(strtolower($this->unit ?? ''), 'r$') || 
-                      str_contains(strtolower($this->unit ?? ''), 'us$') ||
-                      str_contains(strtolower($this->unit ?? ''), '$');
-        
-        if ($isMonetary) {
-            $formatted = number_format($this->value, 2, ',', '.');
-        } else {
-            $formatted = number_format($this->value, 0, ',', '.');
-        }
-        
-        if ($this->unit) {
-            $formatted .= ' ' . $this->unit;
-        }
-        
-        return $formatted;
-    }
-
-    /**
-     * Obter variação formatada
-     */
-    public function getFormattedVariation(): ?string
-    {
-        if ($this->variation === null) {
-            return null;
-        }
-        
-        $prefix = $this->variation >= 0 ? '+' : '';
-        return $prefix . number_format($this->variation, 2, ',', '.') . '%';
-    }
-
-    /**
-     * Verificar se variação é positiva
-     */
-    public function isVariationPositive(): bool
-    {
-        return $this->variation !== null && $this->variation >= 0;
-    }
-
-    /**
-     * Obter URL do arquivo
-     */
-    public function getFileUrl(): ?string
-    {
-        if (!$this->file) {
-            return null;
-        }
-        
-        return asset('storage/' . $this->file);
-    }
-
-    /**
-     * Obter data de publicação formatada
-     */
-    public function getFormattedPublishedAt(): ?string
-    {
-        return $this->published_at?->format('d/m/Y');
-    }
-
-    /**
-     * Obter lista de regiões únicas
-     */
-    public static function getUniqueRegions()
-    {
-        return static::whereNotNull('region')
-                     ->distinct()
-                     ->pluck('region')
-                     ->sort()
-                     ->values();
-    }
-
-    /**
-     * Obter lista de períodos únicos
-     */
-    public static function getUniquePeriods()
-    {
-        return static::whereNotNull('period')
-                     ->distinct()
-                     ->pluck('period')
-                     ->sortDesc()
-                     ->values();
+        return $this->updated_at_data?->format('d/m/Y');
     }
 }

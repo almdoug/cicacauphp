@@ -9,38 +9,21 @@ use Illuminate\Support\Str;
 class ProductionCost extends Model
 {
     protected $fillable = [
-        'user_id',
         'title',
         'slug',
-        'summary',
-        'content',
-        'type',
-        'region',
-        'period',
-        'value',
-        'unit',
+        'frequency',
+        'country',
         'source',
-        'file',
-        'external_link',
-        'published_at',
+        'unit',
+        'comment',
+        'updated_at_data',
     ];
 
     protected $casts = [
-        'published_at' => 'datetime',
-        'value' => 'decimal:2',
+        'updated_at_data' => 'datetime',
     ];
 
-    /**
-     * Tipos de custos de produção
-     */
-    public const TYPES = [
-        'insumos' => 'Insumos',
-        'mao_de_obra' => 'Mão de Obra',
-        'equipamentos' => 'Equipamentos',
-        'transporte' => 'Transporte',
-        'processamento' => 'Processamento',
-        'geral' => 'Geral',
-    ];
+
 
     /**
      * Boot do modelo
@@ -76,121 +59,18 @@ class ProductionCost extends Model
     }
 
     /**
-     * Relacionamento com usuário
+     * Relacionamento com séries de dados
      */
-    public function user(): BelongsTo
+    public function dataSeries()
     {
-        return $this->belongsTo(User::class);
+        return $this->morphMany(DataSeries::class, 'dataable')->orderBy('date');
     }
 
     /**
-     * Scope para itens publicados
+     * Obter data de atualização formatada
      */
-    public function scopePublished($query)
+    public function getFormattedUpdatedAtData(): ?string
     {
-        return $query->whereNotNull('published_at')
-                     ->where('published_at', '<=', now());
-    }
-
-    /**
-     * Scope para rascunhos
-     */
-    public function scopeDraft($query)
-    {
-        return $query->whereNull('published_at');
-    }
-
-    /**
-     * Scope por tipo
-     */
-    public function scopeOfType($query, $type)
-    {
-        return $query->where('type', $type);
-    }
-
-    /**
-     * Scope por região
-     */
-    public function scopeOfRegion($query, $region)
-    {
-        return $query->where('region', $region);
-    }
-
-    /**
-     * Verificar se está publicado
-     */
-    public function isPublished(): bool
-    {
-        return $this->published_at !== null && $this->published_at <= now();
-    }
-
-    /**
-     * Obter nome do tipo
-     */
-    public function getTypeName(): string
-    {
-        return self::TYPES[$this->type] ?? $this->type;
-    }
-
-    /**
-     * Obter valor formatado
-     */
-    public function getFormattedValue(): ?string
-    {
-        if (!$this->value) {
-            return null;
-        }
-        
-        $formatted = 'R$ ' . number_format($this->value, 2, ',', '.');
-        
-        if ($this->unit) {
-            $formatted .= ' ' . $this->unit;
-        }
-        
-        return $formatted;
-    }
-
-    /**
-     * Obter URL do arquivo
-     */
-    public function getFileUrl(): ?string
-    {
-        if (!$this->file) {
-            return null;
-        }
-        
-        return asset('storage/' . $this->file);
-    }
-
-    /**
-     * Obter data de publicação formatada
-     */
-    public function getFormattedPublishedAt(): ?string
-    {
-        return $this->published_at?->format('d/m/Y');
-    }
-
-    /**
-     * Obter lista de regiões únicas
-     */
-    public static function getUniqueRegions()
-    {
-        return static::whereNotNull('region')
-                     ->distinct()
-                     ->pluck('region')
-                     ->sort()
-                     ->values();
-    }
-
-    /**
-     * Obter lista de períodos únicos
-     */
-    public static function getUniquePeriods()
-    {
-        return static::whereNotNull('period')
-                     ->distinct()
-                     ->pluck('period')
-                     ->sortDesc()
-                     ->values();
+        return $this->updated_at_data?->format('d/m/Y');
     }
 }

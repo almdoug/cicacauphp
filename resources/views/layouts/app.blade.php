@@ -14,6 +14,8 @@
 
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    @stack('head-scripts')
 </head>
 <body class="font-sans antialiased bg-white">
     @include('components.navbar')
@@ -23,5 +25,7 @@
     </main>
 
     @include('components.footer')
+    
+    @stack('scripts')
 </body>
 </html>

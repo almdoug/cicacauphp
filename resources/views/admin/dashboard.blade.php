@@ -145,7 +145,7 @@
                 </div>
                 <div class="min-w-0">
                     <h4 class="font-semibold text-gray-900 text-sm sm:text-base">Custos de Produção</h4>
-                    <p class="text-xs sm:text-sm text-gray-600">{{ $productionCostCount }} itens ({{ $publishedProductionCostCount }} publicados)</p>
+                    <p class="text-xs sm:text-sm text-gray-600">{{ $productionCostCount }} itens</p>
                 </div>
             </div>
             <div class="text-xs sm:text-sm text-gray-600 group-hover:text-orange-500 transition-colors flex items-center gap-1">
@@ -165,7 +165,7 @@
                 </div>
                 <div class="min-w-0">
                     <h4 class="font-semibold text-gray-900 text-sm sm:text-base">Dados de Mercado</h4>
-                    <p class="text-xs sm:text-sm text-gray-600">{{ $marketDataCount }} itens ({{ $publishedMarketDataCount }} publicados)</p>
+                    <p class="text-xs sm:text-sm text-gray-600">{{ $marketDataCount }} itens</p>
                 </div>
             </div>
             <div class="text-xs sm:text-sm text-gray-600 group-hover:text-teal-500 transition-colors flex items-center gap-1">

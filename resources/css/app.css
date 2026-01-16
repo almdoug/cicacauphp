@@ -12,3 +12,22 @@
     --color-primary: #F3450F;
     --color-secondary: #F9C10B;
 }
+
+/* Custom Sidebar Scrollbar */
+.admin-sidebar-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #f3f4f6 transparent;
+}
+
+.admin-sidebar-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.admin-sidebar-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.admin-sidebar-scroll::-webkit-scrollbar-thumb {
+    background-color: #f3f4f6; /* Off-white */
+    border-radius: 3px;
+}

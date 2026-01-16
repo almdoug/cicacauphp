@@ -31,7 +31,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
                 </svg>
                 Filtros
-                @if(request()->hasAny(['search', 'type', 'region', 'period']))
+                @if(request()->hasAny(['search', 'country']))
                     <span class="px-2 py-0.5 bg-primary text-white text-xs rounded-full">Ativos</span>
                 @endif
             </span>
@@ -58,49 +58,15 @@
                 >
             </div>
             
-            <!-- Tipo -->
-            <div class="w-full md:w-48">
-                <select 
-                    name="type" 
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
-                >
-                    <option value="">Todos os tipos</option>
-                    @foreach($types as $key => $label)
-                        <option value="{{ $key }}" {{ request('type') == $key ? 'selected' : '' }}>
-                            {{ $label }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            
-            <!-- Região -->
+            <!-- País -->
             <div class="w-full md:w-40">
-                <select 
-                    name="region" 
+                <input 
+                    type="text" 
+                    name="country" 
+                    value="{{ request('country') }}"
+                    placeholder="País"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
                 >
-                    <option value="">Todas as regiões</option>
-                    @foreach($regions as $region)
-                        <option value="{{ $region }}" {{ request('region') == $region ? 'selected' : '' }}>
-                            {{ $region }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <!-- Período -->
-            <div class="w-full md:w-36">
-                <select 
-                    name="period" 
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
-                >
-                    <option value="">Todos os períodos</option>
-                    @foreach($periods as $period)
-                        <option value="{{ $period }}" {{ request('period') == $period ? 'selected' : '' }}>
-                            {{ $period }}
-                        </option>
-                    @endforeach
-                </select>
             </div>
             
             <!-- Botão -->
@@ -111,7 +77,7 @@
                 Filtrar
             </button>
             
-            @if(request()->hasAny(['search', 'type', 'region', 'period']))
+            @if(request()->hasAny(['search', 'country']))
                 <a 
                     href="{{ route('custos.index') }}" 
                     class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all font-medium text-center"
@@ -131,14 +97,16 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 @foreach($costs as $cost)
                     <article class="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group flex flex-col border border-gray-100">
-                        <!-- Header com tipo -->
+                        <!-- Header -->
                         <div class="p-4 bg-gradient-to-r from-primary/10 to-secondary/10 border-b border-gray-100">
                             <div class="flex items-center justify-between">
-                                <span class="px-3 py-1 bg-primary text-white text-xs font-semibold rounded-full">
-                                    {{ $cost->getTypeName() }}
-                                </span>
-                                @if($cost->period)
-                                    <span class="text-sm text-gray-600 font-medium">{{ $cost->period }}</span>
+                                @if($cost->country)
+                                    <span class="px-3 py-1 bg-primary text-white text-xs font-semibold rounded-full">
+                                        {{ $cost->country }}
+                                    </span>
+                                @endif
+                                @if($cost->frequency)
+                                    <span class="text-sm text-gray-600 font-medium">{{ $cost->frequency }}</span>
                                 @endif
                             </div>
                         </div>
@@ -152,14 +120,13 @@
                                 </a>
                             </h2>
 
-                            <!-- Região -->
-                            @if($cost->region)
+                            <!-- Unidade -->
+                            @if($cost->unit)
                                 <div class="flex items-start gap-2 text-sm text-gray-600 mb-3">
                                     <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                                     </svg>
-                                    <span class="line-clamp-1">{{ $cost->region }}</span>
+                                    <span class="line-clamp-1">{{ $cost->unit }}</span>
                                 </div>
                             @endif
 
@@ -173,49 +140,15 @@
                                 </div>
                             @endif
 
-                            <!-- Resumo -->
-                            <p class="text-gray-600 mb-4 line-clamp-3 flex-1 text-sm">
-                                {{ $cost->summary }}
-                            </p>
-
-                            <!-- Valor em destaque -->
-                            @if($cost->value)
-                                <div class="mb-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-100">
-                                    <p class="text-xs text-gray-500 mb-1">Valor</p>
-                                    <p class="text-xl font-bold text-green-700">{{ $cost->getFormattedValue() }}</p>
-                                </div>
+                            <!-- Comentário -->
+                            @if($cost->comment)
+                                <p class="text-gray-600 mb-4 line-clamp-3 flex-1 text-sm">
+                                    {{ $cost->comment }}
+                                </p>
                             @endif
 
                             <!-- Ações -->
-                            <div class="flex items-center justify-between pt-4 border-t border-gray-200">
-                                <div class="flex items-center gap-2">
-                                    @if($cost->file)
-                                        <a 
-                                            href="{{ $cost->getFileUrl() }}" 
-                                            target="_blank"
-                                            class="inline-flex items-center gap-1 text-primary hover:text-primary/80 text-sm font-medium"
-                                            title="Download Arquivo"
-                                        >
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                            </svg>
-                                            Arquivo
-                                        </a>
-                                    @endif
-                                    @if($cost->external_link)
-                                        <a 
-                                            href="{{ $cost->external_link }}" 
-                                            target="_blank"
-                                            class="inline-flex items-center gap-1 text-gray-600 hover:text-primary text-sm font-medium"
-                                            title="Link externo"
-                                        >
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                                            </svg>
-                                            Link
-                                        </a>
-                                    @endif
-                                </div>
+                            <div class="flex items-center justify-end pt-4 border-t border-gray-200">
                                 <a 
                                     href="{{ route('custos.show', $cost->slug) }}" 
                                     class="inline-flex items-center gap-1 text-primary hover:text-primary/80 font-semibold text-sm transition-colors"
@@ -245,13 +178,13 @@
                 </svg>
                 <h3 class="text-xl font-semibold text-gray-900 mb-2">Nenhum custo de produção encontrado</h3>
                 <p class="text-gray-600 mb-4">
-                    @if(request()->hasAny(['search', 'type', 'region', 'period']))
+                    @if(request()->hasAny(['search', 'country']))
                         Tente ajustar os filtros de busca.
                     @else
                         Em breve publicaremos informações sobre custos de produção.
                     @endif
                 </p>
-                @if(request()->hasAny(['search', 'type', 'region', 'period']))
+                @if(request()->hasAny(['search', 'country']))
                     <a href="{{ route('custos.index') }}" class="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>

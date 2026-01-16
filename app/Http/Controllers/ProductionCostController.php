@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\ProductionCost;
+use App\Exports\ProductionCostDataExport;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductionCostController extends Controller
 {
@@ -12,22 +14,11 @@ class ProductionCostController extends Controller
      */
     public function index(Request $request)
     {
-        $query = ProductionCost::published()
-                               ->orderBy('published_at', 'desc');
+        $query = ProductionCost::orderBy('created_at', 'desc');
 
-        // Filtro por tipo
-        if ($request->filled('type')) {
-            $query->ofType($request->type);
-        }
-
-        // Filtro por região
-        if ($request->filled('region')) {
-            $query->ofRegion($request->region);
-        }
-
-        // Filtro por período
-        if ($request->filled('period')) {
-            $query->where('period', $request->period);
+        // Filtro por país
+        if ($request->filled('country')) {
+            $query->where('country', $request->country);
         }
 
         // Busca por texto
@@ -35,18 +26,14 @@ class ProductionCostController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('summary', 'like', "%{$search}%")
+                  ->orWhere('comment', 'like', "%{$search}%")
                   ->orWhere('source', 'like', "%{$search}%");
             });
         }
 
         $costs = $query->paginate(12)->withQueryString();
-        
-        $types = ProductionCost::TYPES;
-        $regions = ProductionCost::getUniqueRegions();
-        $periods = ProductionCost::getUniquePeriods();
 
-        return view('custos-producao', compact('costs', 'types', 'regions', 'periods'));
+        return view('custos-producao', compact('costs'));
     }
 
     /**
@@ -54,18 +41,28 @@ class ProductionCostController extends Controller
      */
     public function show($slug)
     {
-        $cost = ProductionCost::where('slug', $slug)
-                              ->published()
-                              ->firstOrFail();
+        $cost = ProductionCost::where('slug', $slug)->firstOrFail();
 
-        // Itens relacionados (mesmo tipo)
-        $related = ProductionCost::published()
-                                 ->where('id', '!=', $cost->id)
-                                 ->where('type', $cost->type)
-                                 ->orderBy('published_at', 'desc')
+        // Itens relacionados (mesmo país)
+        $related = ProductionCost::where('id', '!=', $cost->id)
+                                 ->where('country', $cost->country)
+                                 ->orderBy('created_at', 'desc')
                                  ->limit(3)
                                  ->get();
 
         return view('custo-producao-single', compact('cost', 'related'));
+    }
+
+    /**
+     * Exportar dados para Excel
+     */
+    public function export($slug)
+    {
+        $cost = ProductionCost::where('slug', $slug)->firstOrFail();
+        $cost->load('dataSeries');
+        
+        $filename = 'custo_producao_' . str_replace(' ', '_', strtolower($cost->title)) . '_' . now()->format('Y-m-d') . '.xlsx';
+        
+        return Excel::download(new ProductionCostDataExport($cost), $filename);
     }
 }

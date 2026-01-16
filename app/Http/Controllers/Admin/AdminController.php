@@ -43,11 +43,9 @@ class AdminController extends Controller
 
         // Production Costs stats (Custos de Produção)
         $productionCostCount = ProductionCost::count();
-        $publishedProductionCostCount = ProductionCost::published()->count();
 
         // Market Data stats (Dados de Mercado)
         $marketDataCount = MarketData::count();
-        $publishedMarketDataCount = MarketData::published()->count();
 
         return view('admin.dashboard', compact(
             'pages', 
@@ -61,9 +59,7 @@ class AdminController extends Controller
             'publicNoticeCount',
             'openPublicNoticeCount',
             'productionCostCount',
-            'publishedProductionCostCount',
-            'marketDataCount',
-            'publishedMarketDataCount'
+            'marketDataCount'
         ));
     }
 
