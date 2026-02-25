@@ -45,7 +45,12 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                     </svg>
-                    <span>{{ $item->getFormattedDate() }}</span>
+                    <span>
+                        {{ $item->getFormattedDate() }}
+                        @if($item->event_end_date && !$item->event_end_date->eq($item->event_date))
+                            &ndash; {{ $item->event_end_date->format('d/m/Y') }}
+                        @endif
+                    </span>
                 </div>
             @endif
 
@@ -95,11 +100,6 @@
                     </p>
                 </div>
 
-                <!-- Conteúdo -->
-                <div class="prose prose-lg max-w-none">
-                    {!! $item->content !!}
-                </div>
-
                 <!-- Autor -->
                 <div class="mt-8 pt-8 border-t border-gray-200">
                     <div class="flex items-center gap-4">
@@ -117,18 +117,18 @@
             <!-- Sidebar -->
             <div class="lg:col-span-1">
                 <!-- Card de Inscrição -->
-                @if($item->registration_link && $item->isUpcoming())
+                @if($item->registration_link)
                     <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white mb-6 sticky top-24">
-                        <h3 class="text-xl font-bold mb-4">Inscreva-se agora!</h3>
+                        <h3 class="text-xl font-bold mb-4">Link do Evento</h3>
                         <p class="text-white/90 mb-6">
-                            Garanta sua vaga neste {{ strtolower($item->getTypeLabel()) }}.
+                            Acesse as informações completas deste {{ strtolower($item->getTypeLabel()) }}.
                         </p>
                         <a 
                             href="{{ $item->registration_link }}" 
                             target="_blank"
                             class="block w-full bg-white text-primary text-center px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-all"
                         >
-                            Fazer Inscrição
+                            Acessar Evento
                         </a>
                     </div>
                 @endif
@@ -158,8 +158,22 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="text-sm text-gray-500">Data</p>
+                                    <p class="text-sm text-gray-500">Data Inicial</p>
                                     <p class="font-semibold text-gray-900">{{ $item->event_date->format('d \d\e F \d\e Y') }}</p>
+                                </div>
+                            </div>
+                        @endif
+
+                        @if($item->event_end_date && !$item->event_end_date->eq($item->event_date))
+                            <div class="flex items-start gap-3">
+                                <div class="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">Data Final</p>
+                                    <p class="font-semibold text-gray-900">{{ $item->event_end_date->format('d \d\e F \d\e Y') }}</p>
                                 </div>
                             </div>
                         @endif

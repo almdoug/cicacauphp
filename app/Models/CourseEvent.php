@@ -21,6 +21,7 @@ class CourseEvent extends Model
         'type',
         'location',
         'event_date',
+        'event_end_date',
         'event_time',
         'registration_link',
         'content',
@@ -30,6 +31,7 @@ class CourseEvent extends Model
     protected $casts = [
         'published_at' => 'datetime',
         'event_date' => 'date',
+        'event_end_date' => 'date',
         'event_time' => 'datetime:H:i',
     ];
 

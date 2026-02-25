@@ -69,11 +69,11 @@
                 @enderror
             </div>
 
-            <!-- Data e Hora do Evento -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Datas e Hora do Evento -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                     <label for="event_date" class="block text-sm font-medium text-gray-700 mb-2">
-                        Data do Evento
+                        Data Inicial do Evento
                     </label>
                     <input 
                         type="date" 
@@ -83,6 +83,22 @@
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent @error('event_date') border-red-500 @enderror"
                     >
                     @error('event_date')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="event_end_date" class="block text-sm font-medium text-gray-700 mb-2">
+                        Data Final do Evento
+                    </label>
+                    <input 
+                        type="date" 
+                        name="event_end_date" 
+                        id="event_end_date" 
+                        value="{{ old('event_end_date', $item->event_end_date ? $item->event_end_date->format('Y-m-d') : '') }}"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent @error('event_end_date') border-red-500 @enderror"
+                    >
+                    @error('event_end_date')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
@@ -122,10 +138,10 @@
                 @enderror
             </div>
 
-            <!-- Link de Inscrição -->
+            <!-- Link do Evento -->
             <div>
                 <label for="registration_link" class="block text-sm font-medium text-gray-700 mb-2">
-                    Link de Inscrição
+                    Link do Evento
                 </label>
                 <input 
                     type="url" 
@@ -172,23 +188,6 @@
                 </div>
             </div>
 
-            <!-- Conteúdo -->
-            <div>
-                <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
-                    Conteúdo <span class="text-red-500">*</span>
-                </label>
-                <textarea 
-                    name="content" 
-                    id="content" 
-                    rows="15"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent @error('content') border-red-500 @enderror"
-                    required
-                >{{ old('content', $item->content) }}</textarea>
-                <p class="mt-1 text-sm text-gray-500">Descrição completa do curso/evento</p>
-                @error('content')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
 
             <!-- Data de Publicação -->
             <div>

@@ -84,7 +84,12 @@
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                         </svg>
-                                        <span>{{ $item->getFormattedDate() }}</span>
+                                        <span>
+                                            {{ $item->getFormattedDate() }}
+                                            @if($item->event_end_date && !$item->event_end_date->eq($item->event_date))
+                                                &ndash; {{ $item->event_end_date->format('d/m/Y') }}
+                                            @endif
+                                        </span>
                                     </div>
                                 @endif
                                 
@@ -123,13 +128,13 @@
 
                             <!-- Botões -->
                             <div class="flex items-center justify-between pt-4 border-t border-gray-200">
-                                @if($item->registration_link && $item->isUpcoming())
+                                @if($item->registration_link)
                                     <a 
                                         href="{{ $item->registration_link }}" 
                                         target="_blank"
                                         class="inline-flex items-center gap-2 bg-secondary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-opacity-90 transition-all"
                                     >
-                                        Inscreva-se
+                                        Acessar Evento
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                                         </svg>
