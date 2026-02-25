@@ -36,8 +36,8 @@
                         </div>
                         <div>
                             <h3 class="font-semibold text-gray-900 mb-1">E-mail</h3>
-                            <a href="mailto:contato@cicacau.org.br" class="text-primary hover:underline">
-                                contato@cicacau.org.br
+                            <a href="mailto:cicacau@nbcgib.uesc.br" class="text-primary hover:underline">
+                                cicacau@nbcgib.uesc.br
                             </a>
                         </div>
                     </div>

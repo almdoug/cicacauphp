@@ -33,7 +33,7 @@ class ContactController extends Controller
         ]);
 
         // Aqui você pode implementar o envio de e-mail
-        // Mail::to('contato@cicacau.org.br')->send(new ContactFormMail($validated));
+        // Mail::to('cicacau@nbcgib.uesc.br')->send(new ContactFormMail($validated));
 
         return back()->with('success', 'Mensagem enviada com sucesso! Entraremos em contato em breve.');
     }
