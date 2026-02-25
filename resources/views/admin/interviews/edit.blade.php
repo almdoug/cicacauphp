@@ -72,7 +72,7 @@
             <!-- Resumo -->
             <div>
                 <label for="summary" class="block text-sm font-medium text-gray-700 mb-2">
-                    Resumo <span class="text-red-500">*</span>
+                    Minicurriculo <span class="text-red-500">*</span>
                 </label>
                 <textarea 
                     name="summary" 

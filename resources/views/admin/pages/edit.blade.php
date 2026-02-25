@@ -50,6 +50,12 @@
                                         @foreach($members as $index => $member)
                                             <div class="team-member-item bg-gray-50 border border-gray-300 rounded-lg p-4" data-index="{{ $index }}">
                                                 <div class="flex items-start gap-3">
+                                                    <!-- Drag Handle -->
+                                                    <div class="drag-handle mt-6 p-2 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing flex-shrink-0" title="Arraste para reordenar">
+                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
+                                                        </svg>
+                                                    </div>
                                                     <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3">
                                                         <div>
                                                             <label class="block text-xs font-medium text-gray-600 mb-1">Nome</label>
@@ -86,16 +92,30 @@
                                         @endforeach
                                     </div>
                                     
-                                    <button 
-                                        type="button" 
-                                        id="add-team-member"
-                                        class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
-                                    >
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                        </svg>
-                                        Adicionar Membro
-                                    </button>
+                                    <div class="flex flex-wrap gap-2">
+                                        <button 
+                                            type="button" 
+                                            id="add-team-member"
+                                            class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+                                        >
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                            </svg>
+                                            Adicionar Membro
+                                        </button>
+
+                                        <button 
+                                            type="button" 
+                                            id="sort-team-az"
+                                            class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+                                            title="Ordenar integrantes em ordem alfabética pelo nome"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path>
+                                            </svg>
+                                            Ordenar A–Z
+                                        </button>
+                                    </div>
                                 </div>
                             @elseif($item->type === 'html')
                                 <div class="mb-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
@@ -169,7 +189,8 @@
 
 @push('scripts')
 <!-- TinyMCE -->
-<script src="https://cdn.tiny.cloud/1/6hy9a8w8irye827ucmizakpfyrwen5do5rdttukpsqtlsuyw/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<!-- SortableJS -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 <script>
     function initTinyMCE() {
         if (typeof tinymce === 'undefined') {
@@ -217,6 +238,39 @@
         
         let memberIndex = container.querySelectorAll('.team-member-item').length;
         
+        // Re-index all member name attributes after sorting or removal
+        function reindexMembers() {
+            container.querySelectorAll('.team-member-item').forEach(function(item, i) {
+                item.setAttribute('data-index', i);
+                item.querySelectorAll('input[name]').forEach(function(input) {
+                    input.name = input.name.replace(/team_members\[\d+\]/, 'team_members[' + i + ']');
+                });
+            });
+            memberIndex = container.querySelectorAll('.team-member-item').length;
+        }
+
+        // Sort members alphabetically by name A-Z
+        function sortMembersAZ() {
+            const items = Array.from(container.querySelectorAll('.team-member-item'));
+            items.sort(function(a, b) {
+                const nameA = (a.querySelector('input[name*="[name]"]')?.value || '').trim().toLowerCase();
+                const nameB = (b.querySelector('input[name*="[name]"]')?.value || '').trim().toLowerCase();
+                return nameA.localeCompare(nameB, 'pt');
+            });
+            items.forEach(function(item) { container.appendChild(item); });
+            reindexMembers();
+        }
+
+        document.getElementById('sort-team-az')?.addEventListener('click', sortMembersAZ);
+
+        // Drag-and-drop sorting
+        Sortable.create(container, {
+            handle: '.drag-handle',
+            animation: 150,
+            ghostClass: 'opacity-50',
+            onEnd: reindexMembers
+        });
+        
         // Add new member
         addButton.addEventListener('click', function() {
             const newMember = document.createElement('div');
@@ -224,6 +278,11 @@
             newMember.setAttribute('data-index', memberIndex);
             newMember.innerHTML = `
                 <div class="flex items-start gap-3">
+                    <div class="drag-handle mt-6 p-2 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing flex-shrink-0" title="Arraste para reordenar">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
+                        </svg>
+                    </div>
                     <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs font-medium text-gray-600 mb-1">Nome</label>
@@ -288,6 +347,7 @@
             
             setTimeout(() => {
                 memberItem.remove();
+                reindexMembers();
             }, 300);
         });
     });
