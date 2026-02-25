@@ -40,6 +40,7 @@ class NewsController extends Controller
             'summary' => 'required|string|max:500',
             'content' => 'required|string',
             'source' => 'nullable|string|max:255',
+            'source_url' => 'nullable|url|max:500',
             'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
             'published_at' => 'nullable|date',
         ]);
@@ -81,6 +82,7 @@ class NewsController extends Controller
             'summary' => 'required|string|max:500',
             'content' => 'required|string',
             'source' => 'nullable|string|max:255',
+            'source_url' => 'nullable|url|max:500',
             'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
             'published_at' => 'nullable|date',
         ]);

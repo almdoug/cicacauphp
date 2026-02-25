@@ -91,6 +91,25 @@
                 @enderror
             </div>
 
+            <!-- Link da Fonte -->
+            <div>
+                <label for="source_url" class="block text-sm font-medium text-gray-700 mb-2">
+                    Link da fonte
+                </label>
+                <input 
+                    type="url" 
+                    name="source_url" 
+                    id="source_url" 
+                    value="{{ old('source_url') }}"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent @error('source_url') border-red-500 @enderror"
+                    placeholder="https://exemplo.com/noticia-original"
+                >
+                <p class="mt-1 text-sm text-gray-500">URL da matéria original (opcional)</p>
+                @error('source_url')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
             <!-- Conteúdo -->
             <div>
                 <label for="content" class="block text-sm font-medium text-gray-700 mb-2">

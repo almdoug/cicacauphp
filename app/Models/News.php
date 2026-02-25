@@ -17,6 +17,7 @@ class News extends Model
         'image',
         'summary',
         'source',
+        'source_url',
         'content',
         'published_at',
     ];
