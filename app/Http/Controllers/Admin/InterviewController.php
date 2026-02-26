@@ -37,7 +37,7 @@ class InterviewController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'summary' => 'required|string|max:500',
+            'summary' => 'required|string|max:1000',
             'content' => 'required|string',
             'interviewee_name' => 'required|string|max:255',
             'interviewee_role' => 'nullable|string|max:255',
@@ -80,7 +80,7 @@ class InterviewController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'summary' => 'required|string|max:500',
+            'summary' => 'required|string|max:1000',
             'content' => 'required|string',
             'interviewee_name' => 'required|string|max:255',
             'interviewee_role' => 'nullable|string|max:255',

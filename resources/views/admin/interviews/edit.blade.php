@@ -78,10 +78,15 @@
                     name="summary" 
                     id="summary" 
                     rows="3"
+                    maxlength="1000"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent @error('summary') border-red-500 @enderror"
                     required
+                    oninput="updateSummaryCounter(this)"
                 >{{ old('summary', $interview->summary) }}</textarea>
-                <p class="mt-1 text-sm text-gray-500">Breve descrição da entrevista (máximo 500 caracteres)</p>
+                <div class="mt-1 flex items-center justify-between">
+                    <p class="text-sm text-gray-500">Minicurrículo do entrevistado (máximo 1000 caracteres)</p>
+                    <p id="summary-counter" class="text-sm text-gray-500"><span id="summary-count">{{ strlen(old('summary', $interview->summary ?? '')) }}</span>/1000</p>
+                </div>
                 @error('summary')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
@@ -222,5 +227,39 @@ function previewImage(input) {
         reader.readAsDataURL(input.files[0]);
     }
 }
+
+function updateSummaryCounter(textarea) {
+    const count = textarea.value.length;
+    const max = 1000;
+    const countEl = document.getElementById('summary-count');
+    const counterEl = document.getElementById('summary-counter');
+    countEl.textContent = count;
+    if (count >= max) {
+        counterEl.classList.add('text-red-600');
+        counterEl.classList.remove('text-gray-500', 'text-yellow-600');
+    } else if (count >= max * 0.9) {
+        counterEl.classList.add('text-yellow-600');
+        counterEl.classList.remove('text-gray-500', 'text-red-600');
+    } else {
+        counterEl.classList.remove('text-red-600', 'text-yellow-600');
+        counterEl.classList.add('text-gray-500');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const textarea = document.getElementById('summary');
+    if (textarea) updateSummaryCounter(textarea);
+
+    const form = textarea ? textarea.closest('form') : null;
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            if (textarea.value.length > 1000) {
+                e.preventDefault();
+                textarea.focus();
+                alert('O campo Minicurrículo ultrapassou o limite de 1000 caracteres. Por favor, reduza o texto antes de salvar.');
+            }
+        });
+    }
+});
 </script>
 @endsection
